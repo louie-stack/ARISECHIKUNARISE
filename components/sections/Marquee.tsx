@@ -1,27 +1,44 @@
 "use client";
 
-export default function Marquee() {
-  const phrases = [
-    "ARISE CHIKUN ARISE",
-    "鶏鳴",
-    "THE FORGOTTEN RETURN",
-    "LITVM CITY",
-    "ARISE CHIKUN ARISE",
-    "鶏鳴",
-    "THE DOG DAYS ARE DONE",
-    "POWERED BY LITVM"
-  ];
+type MarqueeProps = {
+  variant?: "mint" | "blue" | "glow" | "bone";
+  items?: string[];
+};
+
+const DEFAULT_ITEMS = [
+  "ARISE CHIKUN ARISE",
+  "THE FORGOTTEN RETURN",
+  "LITVM CITY",
+  "THE CHANT BECAME A SUMMONS",
+  "鶏鳴"
+];
+
+export default function Marquee({
+  variant = "mint",
+  items = DEFAULT_ITEMS
+}: MarqueeProps) {
+  const bgClass = {
+    mint: "bg-mint text-ink",
+    blue: "bg-blue text-bone",
+    glow: "bg-glow text-ink",
+    bone: "bg-bone text-ink"
+  }[variant];
+
+  // Duplicate for seamless loop
+  const loop = [...items, ...items, ...items, ...items];
 
   return (
-    <div className="marquee-tape border-y-2 border-ink-900">
-      <div className="flex whitespace-nowrap animate-marquee">
-        {[...phrases, ...phrases].map((phrase, i) => (
+    <div
+      className={`${bgClass} border-y-4 border-ink py-3 md:py-4 overflow-hidden relative z-10`}
+    >
+      <div className="flex animate-marquee whitespace-nowrap">
+        {loop.map((item, i) => (
           <span
             key={i}
-            className="font-graffiti text-xl md:text-2xl tracking-wider px-8 flex items-center gap-8"
+            className="font-black text-xl md:text-3xl tracking-tight px-6 flex items-center gap-6 shrink-0"
           >
-            {phrase}
-            <span className="text-ink-900/40">✦</span>
+            {item}
+            <span className="text-ink/40">✦</span>
           </span>
         ))}
       </div>

@@ -1,160 +1,120 @@
-# ARISE CHIKUN, ARISE
+# ARISE CHIKUN — v2 (Mew-style rebuild)
 
-A dark-anime mythology site for Chikun — the forgotten Litecoin mascot. Built in the spirit of mew.xyz, reinterpreted for LitVM City.
+A Mew.xyz-structured site re-skinned with Chikun's palette and voice.
 
-## Tech stack
+## What changed from v1
 
-- **Next.js 14** (App Router)
-- **TypeScript**
-- **Tailwind CSS** with custom noir palette
-- **Framer Motion** for scroll + reveal animations
-- **lucide-react** for icons
+- **Dropped framer-motion** — Mew's site uses pure CSS animations (marquees, wiggle, simple hovers). No scroll-fade-in needed.
+- **New palette** — Litecoin blue replaces Mew's red as the dominant section color. Bone white, pure black, and mint/glow accents.
+- **Typography is bold sans only** — Hanken Grotesk 900 in all caps. Permanent Marker reserved for occasional spray-paint graffiti overlays on specific words.
+- **Sticker-button style** — pill buttons with hard offset shadows, like Mew's pink pills.
+- **Zine layout** — sections have hard solid backgrounds, jagged comb-tooth transitions, tilted sticker frames, film-strip gallery borders.
 
-## Getting started
+## Tech
 
-### 1. Install dependencies
+- Next.js 14 (App Router) + TypeScript
+- Tailwind CSS with custom Chikun palette
+- lucide-react for icons
+- No heavy animation library — pure CSS keyframes
+
+## Quick start
 
 ```bash
 npm install
-```
-
-### 2. Run the dev server
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open http://localhost:3000
 
-### 3. Drop your art in
-
-The site expects these folders under `/public/art/`:
-
-```
-public/
-└── art/
-    ├── hero/
-    │   └── chikun-hero.png          ← homepage hero shot
-    ├── scenes/
-    │   ├── slide-01.png  →  slide-12.png   ← homepage art sliders
-    │   ├── tale-01.png   →  tale-03.png    ← Chikun Tales cards
-    │   └── universe-01.png → universe-04.png ← Creative Universe grid
-    └── memes/
-        ├── meme-01.png   →  meme-12.(png|gif)  ← Memes page grid
-```
-
-Filenames are referenced in:
-- `components/sections/Hero.tsx`
-- `app/page.tsx` (ArtSlider galleries)
-- `components/sections/ChikunTales.tsx`
-- `components/sections/CreativeUniverse.tsx`
-- `app/memes/page.tsx`
-
-Either match the filenames, or rename yours and update the references.
-
-## Customizing
-
-### Palette
-
-Edit `tailwind.config.ts` — `ink`, `bone`, `glow`, `blood` scales.
-
-### Fonts
-
-Imported from Google Fonts in `app/globals.css`. Currently:
-- **Cinzel** (display / headlines)
-- **Inter** (body)
-- **JetBrains Mono** (technical / tags)
-- **Permanent Marker** (graffiti / logo)
-
-Swap any of them by editing the `@import` line and the `--font-*` CSS variables.
-
-### Copy
-
-All lore copy lives directly in the components. Edit in place:
-- `components/sections/Intro.tsx` — the "for too long" beat
-- `components/sections/LoreQuote.tsx` — the mythic quote
-- `components/sections/Tokenomics.tsx` — stats + caption
-- `app/about/page.tsx` — full about copy
-- `app/community/page.tsx` — groups, events, press
-- `app/contact/page.tsx` — form copy
-
-### Contact form
-
-The form in `app/contact/page.tsx` currently simulates a send with a 1.2s delay. To wire it to a real service, replace the `handleSubmit` function. Options:
-
-**Formspree** — easiest. Create a form, get an endpoint, POST to it:
-```ts
-await fetch("https://formspree.io/f/YOUR_FORM_ID", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(form)
-});
-```
-
-**Resend** — better if you want emails. Requires a serverless API route.
-
-**Vercel serverless function** — create `app/api/contact/route.ts` and POST to it from the form.
-
-## Deploying
-
-### Vercel (recommended)
-
-1. Push this repo to GitHub
-2. Import it at [vercel.com/new](https://vercel.com/new)
-3. Vercel auto-detects Next.js — just click Deploy
-4. Add your custom domain in Vercel settings
-
-### Build locally first to check
+## Deploy
 
 ```bash
-npm run build
+git add .
+git commit -m "mew-style rebuild"
+git push
 ```
 
-Fix any TypeScript errors before deploying.
+Vercel auto-deploys from your GitHub main branch.
 
-## File structure
+## Asset folders
+
+Drop your art into these paths:
 
 ```
-chikun-site/
-├── app/
-│   ├── about/page.tsx
-│   ├── community/page.tsx
-│   ├── contact/page.tsx
-│   ├── memes/page.tsx
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx              ← homepage (long scroll)
-├── components/
-│   ├── sections/
-│   │   ├── ArtSlider.tsx
-│   │   ├── ChikunTales.tsx
-│   │   ├── CreativeUniverse.tsx
-│   │   ├── Hero.tsx
-│   │   ├── Intro.tsx
-│   │   ├── LoreQuote.tsx
-│   │   ├── Marquee.tsx
-│   │   └── Tokenomics.tsx
-│   └── ui/
-│       ├── Footer.tsx
-│       └── Navigation.tsx
-├── public/art/               ← drop your images here
-├── tailwind.config.ts
-├── next.config.js
-├── tsconfig.json
-└── package.json
+public/art/
+├── hero/
+│   └── chikun-hero.png              # Main hero character (transparent PNG preferred)
+├── scenes/
+│   ├── stronghold-01.png → stronghold-06.png    # Scrolling galleries
+│   ├── tale-01.png → tale-04.png                # Chikun Tales strip
+│   ├── media-01.png → media-05.png              # Press cards
+│   └── merch-preview.png                        # Merch teaser
+└── memes/
+    └── meme-01.png → meme-12.(png|gif)          # Memes grid
 ```
 
-## What's stubbed
+If your filenames differ, update the references in:
+- `components/sections/Hero.tsx`
+- `components/sections/Strongholds.tsx`
+- `components/sections/ChikunTales.tsx`
+- `components/sections/Media.tsx`
+- `components/sections/MerchTeaser.tsx`
+- `app/memes/page.tsx`
 
-A few things are intentionally placeholder:
-- **Social links** in Navigation and Footer point to bare domains (e.g. `https://x.com`). Replace with real handles when you have them.
-- **Tokenomics numbers** are borrowed from Mew's pattern — adjust to whatever Chikun's actual supply/distribution is.
-- **Press articles** on the Community page are all "COMING SOON" — replace with real coverage when it exists.
-- **Event dates** are all TBA.
-- **Contact form** simulates success — needs a real backend (see above).
+## Palette
 
-## License
+Edit `tailwind.config.ts`:
 
-Your project, your call.
+- `blue` — primary section background (#2B5FAD)
+- `ink` — black sections (#0A0A0F)
+- `bone` — off-white sections (#F5F3EF)
+- `mint` — pale button color (#C5F5E4)
+- `glow` — accent / LTC green (#2EE862)
+- `blood` — spray-paint red (#C41E3A)
+
+## Key components explained
+
+### `Marquee.tsx`
+Reusable scrolling tape. Pass `variant="mint" | "blue" | "glow" | "bone"` and optional `items` array.
+
+### `Hero.tsx`
+Giant CHIKUN background letters with character image in front. Copy blocks on left/right, CTA in center.
+
+### `Strongholds.tsx`
+Two horizontally-scrolling image galleries (opposite directions) sandwiching a big first-person lore block.
+
+### `NewEra.tsx`
+Tokenomics — Total Supply at top, Burned LP / Community split below, spinning Ł coin, Creative Universe CTA.
+
+### `ChikunTales.tsx`
+Tilted gallery strip with TAILS spray-paint overlay on "TALES" text.
+
+### Spray-paint overlay technique
+```jsx
+<span className="relative inline-block">
+  <span>Underlying text</span>
+  <span
+    className="absolute inset-0 flex items-center justify-center spray-tag"
+    style={{ transform: "rotate(-3deg)", color: "#2EE862" }}
+  >
+    OVERLAY TEXT
+  </span>
+</span>
+```
+
+## Things still stubbed
+
+- Social links in Navigation and Footer point to bare domains
+- Tokenomics numbers are borrowed placeholders (88,888,888,888) — adjust for Chikun's real supply
+- Press/events are all "COMING SOON" / "TBA"
+- Contact form simulates success — wire to Formspree/Resend/serverless to make real
+
+## When your art isn't ready yet
+
+Temporarily replace image `src` paths with:
+```
+https://picsum.photos/seed/chikun01/1200/1200
+```
+Different seed strings = different placeholder images.
 
 鶏鳴 · KEIMEI · THE CRY AT DAWN

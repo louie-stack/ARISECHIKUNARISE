@@ -1,43 +1,49 @@
 import Hero from "@/components/sections/Hero";
 import Marquee from "@/components/sections/Marquee";
-import Intro from "@/components/sections/Intro";
-import ArtSlider from "@/components/sections/ArtSlider";
-import LoreQuote from "@/components/sections/LoreQuote";
-import Tokenomics from "@/components/sections/Tokenomics";
+import PoweredByLitVM from "@/components/sections/PoweredByLitVM";
+import Strongholds from "@/components/sections/Strongholds";
+import NewEra from "@/components/sections/NewEra";
 import ChikunTales from "@/components/sections/ChikunTales";
-import CreativeUniverse from "@/components/sections/CreativeUniverse";
-
-// Art slides — replace src paths with your actual generated art
-const GALLERY_ONE = [
-  { src: "/art/scenes/slide-01.png", caption: "THE ALLEY / RAIN" },
-  { src: "/art/scenes/slide-02.png", caption: "THE ROOFTOP" },
-  { src: "/art/scenes/slide-03.png", caption: "THE STOREFRONT" },
-  { src: "/art/scenes/slide-04.png", caption: "THE TOWER" },
-  { src: "/art/scenes/slide-05.png", caption: "THE WORKBENCH" },
-  { src: "/art/scenes/slide-06.png", caption: "THE LEAP" }
-];
-
-const GALLERY_TWO = [
-  { src: "/art/scenes/slide-07.png", caption: "NEON / Ł" },
-  { src: "/art/scenes/slide-08.png", caption: "THE CHANT" },
-  { src: "/art/scenes/slide-09.png", caption: "THE FLICKER" },
-  { src: "/art/scenes/slide-10.png", caption: "THE MIRROR" },
-  { src: "/art/scenes/slide-11.png", caption: "THE CLIMB" },
-  { src: "/art/scenes/slide-12.png", caption: "THE CROWN" }
-];
+import Media from "@/components/sections/Media";
+import MerchTeaser from "@/components/sections/MerchTeaser";
 
 export default function HomePage() {
   return (
     <>
+      {/* 1. Top marquee */}
+      <div className="pt-20">
+        <Marquee
+          variant="mint"
+          items={[
+            "ARISE CHIKUN ARISE",
+            "THE FORGOTTEN RETURN",
+            "THE CHANT WAS A SUMMONS",
+            "LITVM CITY",
+            "鶏鳴"
+          ]}
+        />
+      </div>
+
+      {/* 2. Hero */}
       <Hero />
-      <Marquee />
-      <Intro />
-      <ArtSlider slides={GALLERY_ONE} direction="left" speed="slow" />
-      <LoreQuote />
-      <ArtSlider slides={GALLERY_TWO} direction="right" speed="normal" />
-      <Tokenomics />
+
+      {/* 3. Powered by LitVM tape */}
+      <PoweredByLitVM />
+
+      {/* 4. Strongholds — big text, galleries, first-person lore */}
+      <Strongholds />
+
+      {/* 5. New Era tokenomics */}
+      <NewEra />
+
+      {/* 6. Chikun Tales */}
       <ChikunTales />
-      <CreativeUniverse />
+
+      {/* 7. Media / press */}
+      <Media />
+
+      {/* 8. Merch teaser */}
+      <MerchTeaser />
     </>
   );
 }

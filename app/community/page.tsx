@@ -1,201 +1,97 @@
-import { Metadata } from "next";
-import Link from "next/link";
+import Marquee from "@/components/sections/Marquee";
 
-export const metadata: Metadata = {
-  title: "COMMUNITY — ARISE CHIKUN, ARISE",
-  description: "The chant continues. The old heads gather."
+export const metadata = {
+  title: "COMMUNITY — ARISE CHIKUN, ARISE"
 };
 
 const GROUPS = [
-  {
-    name: "X / TWITTER",
-    handle: "@chikun",
-    description: "Daily fragments. On-chain messages. The signal.",
-    href: "https://x.com"
-  },
-  {
-    name: "TELEGRAM",
-    handle: "t.me/chikun",
-    description: "Where the chant lives. Real-time voices, old heads, new believers.",
-    href: "https://t.me"
-  },
-  {
-    name: "DISCORD",
-    handle: "discord.gg/chikun",
-    description: "The archive. Lore channels, art drops, deep-dive threads.",
-    href: "https://discord.gg"
-  },
-  {
-    name: "INSTAGRAM",
-    handle: "@chikun",
-    description: "Visual fragments from LitVM City. Every post is a frame.",
-    href: "https://instagram.com"
-  }
-];
-
-const PRESS = [
-  {
-    date: "COMING SOON",
-    outlet: "LITECOIN TIMES",
-    title: "The Return of the Original Meme",
-    href: "#"
-  },
-  {
-    date: "COMING SOON",
-    outlet: "CRYPTO NOIR",
-    title: "LitVM City: The Mythology Under the Layer 2",
-    href: "#"
-  },
-  {
-    date: "COMING SOON",
-    outlet: "MEMETIC QUARTERLY",
-    title: "Why Thirteen-Year-Old Chants Still Echo",
-    href: "#"
-  }
+  { name: "X / TWITTER", handle: "@chikun", desc: "Daily fragments. On-chain messages. The signal.", href: "#" },
+  { name: "TELEGRAM", handle: "t.me/chikun", desc: "Where the chant lives. Real-time voices.", href: "#" },
+  { name: "DISCORD", handle: "discord.gg/chikun", desc: "The archive. Lore channels, art drops.", href: "#" },
+  { name: "INSTAGRAM", handle: "@chikun", desc: "Visual fragments from LitVM City.", href: "#" }
 ];
 
 const EVENTS = [
-  {
-    date: "TBA",
-    title: "THE FIRST CHANT",
-    location: "ONLINE / GLOBAL",
-    description:
-      "Launch night. Coordinated posts across every platform. The signal goes live."
-  },
-  {
-    date: "TBA",
-    title: "LITVM CITY / OPEN STUDIO",
-    location: "DISCORD LIVE",
-    description:
-      "Behind-the-scenes look at how Chikun gets made. Prompt-by-prompt, scene-by-scene."
-  },
-  {
-    date: "TBA",
-    title: "RISE WEEK",
-    location: "COMMUNITY WIDE",
-    description:
-      "Seven days of fragments. Seven pieces of new art. One coordinated chant."
-  }
+  { date: "TBA", title: "The First Chant", location: "Online / Global", desc: "Launch night. Coordinated posts. The signal goes live." },
+  { date: "TBA", title: "LitVM City / Open Studio", location: "Discord Live", desc: "Behind-the-scenes. Prompt-by-prompt, scene-by-scene." },
+  { date: "TBA", title: "Rise Week", location: "Community Wide", desc: "Seven days. Seven pieces of new art. One coordinated chant." }
 ];
 
 export default function CommunityPage() {
   return (
-    <div className="pt-32 pb-20 px-6 md:px-16">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-20">
-          <p className="font-mono text-xs tracking-[0.4em] text-glow-500 mb-6">
-            ━━ COMMUNITY / THE CHANT ━━
-          </p>
-          <h1 className="font-display text-5xl md:text-8xl font-black leading-[0.9] text-bone-100 mb-8">
-            The old heads
-            <br />
-            <span className="glow-text text-glow-400">gather.</span>
-          </h1>
-          <p className="text-bone-100/70 text-lg max-w-2xl leading-relaxed">
-            You typed the chant. You remember the candles. You know what this
-            is. Find your people.
-          </p>
-        </div>
+    <>
+      <div className="pt-20">
+        <Marquee variant="mint" items={["COMMUNITY", "THE CHANT", "THE OLD HEADS GATHER"]} />
+      </div>
 
-        {/* Groups */}
-        <section className="mb-32">
-          <p className="font-mono text-xs tracking-[0.4em] text-glow-500 mb-8">
-            ━━ GROUPS ━━
-          </p>
+      {/* Hero */}
+      <section className="bg-blue text-bone py-20 md:py-28 px-4 md:px-8 text-center">
+        <h1 className="font-black leading-[0.9] tracking-tight" style={{ fontSize: "clamp(3rem, 12vw, 10rem)" }}>
+          The old heads
+          <br />
+          <span className="relative inline-block">
+            <span>gather</span>
+            <span
+              className="absolute inset-0 flex items-center justify-center spray-tag"
+              style={{ transform: "rotate(-3deg)", color: "#2EE862", fontSize: "inherit" }}
+            >
+              RETURN
+            </span>
+          </span>
+        </h1>
+      </section>
+
+      {/* Groups */}
+      <section className="bg-bone text-ink py-20 md:py-28 px-4 md:px-8">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="font-black text-center mb-12 leading-none tracking-tight" style={{ fontSize: "clamp(2rem, 7vw, 5rem)" }}>
+            Groups
+          </h2>
           <div className="grid md:grid-cols-2 gap-6">
-            {GROUPS.map((g) => (
+            {GROUPS.map((g, i) => (
               <a
                 key={g.name}
                 href={g.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative p-8 bg-ink-800 border border-ink-600 hover:border-glow-500/50 transition-all"
+                className={`block bg-ink text-bone border-4 border-ink p-8 rounded-3xl shadow-[6px_6px_0_#2EE862] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0_#2EE862] transition-all ${
+                  i % 2 === 1 ? "md:translate-y-6" : ""
+                }`}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-graffiti text-2xl text-bone-100 group-hover:text-glow-400 transition-colors tracking-wider">
-                    {g.name}
-                  </h3>
-                  <span className="font-mono text-xs tracking-[0.2em] text-glow-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                    →
-                  </span>
-                </div>
-                <p className="font-mono text-xs tracking-[0.2em] text-bone-100/50 mb-4">
-                  {g.handle}
-                </p>
-                <p className="text-bone-100/70 text-sm leading-relaxed">
-                  {g.description}
-                </p>
-
-                {/* Corner accent */}
-                <div className="absolute top-0 left-0 w-6 h-6 border-t border-l border-glow-500/40 group-hover:border-glow-500 transition-colors" />
+                <h3 className="font-black text-3xl mb-2 tracking-tight">{g.name}</h3>
+                <p className="font-black text-glow text-sm tracking-[0.2em] mb-4">{g.handle}</p>
+                <p className="prose-normal text-base text-bone/80">{g.desc}</p>
               </a>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Events */}
-        <section className="mb-32">
-          <p className="font-mono text-xs tracking-[0.4em] text-glow-500 mb-8">
-            ━━ EVENTS ━━
-          </p>
+      {/* Events */}
+      <section className="bg-ink text-bone py-20 md:py-28 px-4 md:px-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-black text-center mb-12 leading-none tracking-tight" style={{ fontSize: "clamp(2rem, 7vw, 5rem)" }}>
+            Events
+          </h2>
           <div className="space-y-4">
             {EVENTS.map((e, i) => (
               <article
                 key={e.title}
-                className="group relative grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 p-6 md:p-8 bg-ink-800 border border-ink-600 hover:border-glow-500/50 transition-all"
+                className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_auto] gap-6 p-6 md:p-8 bg-blue border-4 border-bone rounded-2xl"
               >
-                <div className="font-mono text-xs tracking-[0.3em] text-glow-500 pt-1">
-                  0{i + 1}
-                </div>
+                <div className="font-black text-glow text-xl">0{i + 1}</div>
                 <div>
-                  <p className="font-mono text-xs tracking-[0.3em] text-bone-100/50 mb-2">
+                  <p className="font-black text-xs tracking-[0.3em] text-bone/60 mb-2">
                     {e.date} · {e.location}
                   </p>
-                  <h3 className="font-display text-2xl md:text-3xl font-bold text-bone-100 group-hover:text-glow-400 transition-colors mb-3">
-                    {e.title}
-                  </h3>
-                  <p className="text-bone-100/70 text-sm leading-relaxed max-w-2xl">
-                    {e.description}
-                  </p>
-                </div>
-                <div className="hidden md:flex items-start pt-2 font-mono text-xs tracking-[0.2em] text-bone-100/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                  DETAILS →
+                  <h3 className="font-black text-2xl md:text-3xl mb-2 tracking-tight">{e.title}</h3>
+                  <p className="prose-normal text-base text-bone/80">{e.desc}</p>
                 </div>
               </article>
             ))}
           </div>
-        </section>
-
-        {/* Press */}
-        <section>
-          <p className="font-mono text-xs tracking-[0.4em] text-glow-500 mb-8">
-            ━━ PRESS / PR ━━
-          </p>
-          <div className="space-y-2">
-            {PRESS.map((p) => (
-              <Link
-                key={p.title}
-                href={p.href}
-                className="group grid grid-cols-[auto_1fr] md:grid-cols-[120px_200px_1fr_auto] gap-4 md:gap-8 py-6 border-b border-ink-600 hover:border-glow-500/40 transition-colors"
-              >
-                <span className="font-mono text-xs tracking-[0.2em] text-glow-500 pt-1">
-                  {p.date}
-                </span>
-                <span className="font-mono text-xs tracking-[0.2em] text-bone-100/60 pt-1 hidden md:block">
-                  {p.outlet}
-                </span>
-                <h3 className="font-display text-lg text-bone-100 group-hover:text-glow-400 transition-colors col-span-2 md:col-span-1">
-                  {p.title}
-                </h3>
-                <span className="hidden md:block font-mono text-xs tracking-[0.2em] text-bone-100/40 group-hover:text-glow-500 pt-1 transition-colors">
-                  READ →
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      </div>
-    </div>
+        </div>
+      </section>
+    </>
   );
 }

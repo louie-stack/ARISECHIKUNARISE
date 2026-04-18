@@ -8,62 +8,50 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Chikun's noir palette
+        // Chikun's section palette — mirrors Mew's red/black/white logic
+        // but with Litecoin blue as the dominant hue
+        blue: {
+          DEFAULT: "#2B5FAD",     // primary section background
+          dark: "#1E4480",        // hover / darker variant
+          light: "#4A7BC8"        // highlight variant
+        },
         ink: {
-          950: "#030508",
-          900: "#05070a",
-          800: "#0a0d12",
-          700: "#10141b",
-          600: "#181d26",
-          500: "#232936"
+          DEFAULT: "#0A0A0F",     // pure black sections
+          soft: "#14141C"
         },
         bone: {
-          50: "#fafafa",
-          100: "#f5f3ef",
-          200: "#e8e4db"
+          DEFAULT: "#F5F3EF",     // off-white sections
+          soft: "#EDEBE4"
         },
-        // LTC green — the glow
+        mint: {
+          DEFAULT: "#C5F5E4",     // pale button color (Mew's pink equivalent)
+          dark: "#A8E8D1"
+        },
         glow: {
-          400: "#9bffb0",
-          500: "#5cff85",
-          600: "#2ee862",
-          700: "#1fb84d"
+          DEFAULT: "#2EE862",     // accent / ecosystem button (Mew's green)
+          soft: "#5CFF85",
+          deep: "#1FB84D"
         },
-        // Oxblood — the red lining accent
         blood: {
-          500: "#a51c2c",
-          600: "#7e1220",
-          700: "#58091a"
+          DEFAULT: "#C41E3A"      // reserved for spray-paint graffiti overlays
         }
       },
       fontFamily: {
-        display: ["var(--font-display)", "serif"],
-        body: ["var(--font-body)", "sans-serif"],
-        mono: ["var(--font-mono)", "monospace"],
-        graffiti: ["var(--font-graffiti)", "cursive"]
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        spray: ["var(--font-spray)", "cursive"]
       },
       animation: {
-        "flicker": "flicker 3s ease-in-out infinite",
-        "rain": "rain 8s linear infinite",
-        "glow-pulse": "glow-pulse 4s ease-in-out infinite",
+        "marquee": "marquee 30s linear infinite",
+        "marquee-slow": "marquee 60s linear infinite",
+        "spin-slow": "spin 20s linear infinite",
         "scroll-x": "scroll-x 60s linear infinite",
-        "scroll-x-reverse": "scroll-x-reverse 75s linear infinite",
-        "marquee": "marquee 40s linear infinite"
+        "scroll-x-reverse": "scroll-x-reverse 60s linear infinite",
+        "wiggle": "wiggle 3s ease-in-out infinite"
       },
       keyframes: {
-        flicker: {
-          "0%, 100%": { opacity: "1" },
-          "45%": { opacity: "1" },
-          "50%": { opacity: "0.4" },
-          "55%": { opacity: "1" }
-        },
-        rain: {
-          "0%": { transform: "translateY(-10%)" },
-          "100%": { transform: "translateY(110%)" }
-        },
-        "glow-pulse": {
-          "0%, 100%": { filter: "drop-shadow(0 0 8px rgb(92 255 133 / 0.6))" },
-          "50%": { filter: "drop-shadow(0 0 20px rgb(92 255 133 / 0.9))" }
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" }
         },
         "scroll-x": {
           "0%": { transform: "translateX(0)" },
@@ -73,14 +61,10 @@ const config: Config = {
           "0%": { transform: "translateX(-50%)" },
           "100%": { transform: "translateX(0)" }
         },
-        marquee: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-100%)" }
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-1deg)" },
+          "50%": { transform: "rotate(1deg)" }
         }
-      },
-      backgroundImage: {
-        "grain": "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")",
-        "scanlines": "repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 3px)"
       }
     }
   },

@@ -2,14 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts — swap to self-hosted later for production */
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Permanent+Marker&display=swap");
+/* Fonts — bold chunky sans + spray-paint accent */
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800;900&family=Permanent+Marker&display=swap");
 
 :root {
-  --font-display: "Cinzel", serif;
-  --font-body: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-  --font-graffiti: "Permanent Marker", cursive;
+  --font-sans: "Hanken Grotesk", system-ui, sans-serif;
+  --font-spray: "Permanent Marker", cursive;
 }
 
 * {
@@ -17,134 +15,176 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body {
-  background: #05070a;
-  color: #e8e4db;
-  font-family: var(--font-body);
-  overflow-x: hidden;
+html {
+  scroll-behavior: smooth;
 }
 
-/* Custom scrollbar — matches the aesthetic */
+html,
+body {
+  background: #0A0A0F;
+  color: #F5F3EF;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  overflow-x: hidden;
+  text-transform: uppercase;
+}
+
+/* Restore non-uppercase for body prose blocks */
+.prose-normal,
+.prose-normal * {
+  text-transform: none !important;
+  font-weight: 500;
+}
+
+/* Selection */
+::selection {
+  background: #2EE862;
+  color: #0A0A0F;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #05070a;
+  background: #0A0A0F;
 }
 ::-webkit-scrollbar-thumb {
-  background: #181d26;
-  border-left: 1px solid #5cff85;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #232936;
+  background: #2B5FAD;
+  border-left: 2px solid #2EE862;
 }
 
-/* Selection — green highlight like his eyes */
-::selection {
-  background: #5cff85;
-  color: #05070a;
-}
-
-/* Utility: noise overlay */
-.noise-overlay {
-  position: relative;
-}
-.noise-overlay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Utility: rain streaks */
-.rain-layer {
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 3px,
-    rgba(155, 255, 176, 0.03) 3px,
-    rgba(155, 255, 176, 0.03) 4px,
-    transparent 4px,
-    transparent 60px
-  );
-  pointer-events: none;
-  animation: rain 8s linear infinite;
-}
-
-/* Utility: glowing text */
-.glow-text {
-  text-shadow: 0 0 20px rgba(92, 255, 133, 0.6),
-    0 0 40px rgba(92, 255, 133, 0.3);
-}
-
-/* Utility: distressed edge */
-.distressed {
-  position: relative;
-}
-.distressed::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    transparent 40%,
-    rgba(5, 7, 10, 0.6) 100%
-  );
-  pointer-events: none;
-  mix-blend-mode: multiply;
-}
-
-/* Film strip border — mew-style */
-.film-strip {
-  background-image: 
-    repeating-linear-gradient(
-      to right,
-      #05070a 0px,
-      #05070a 8px,
-      transparent 8px,
-      transparent 24px
-    );
-  height: 20px;
-}
-
-/* Spray-paint button style */
-.spray-btn {
-  position: relative;
+/* Button styles — Mew's sticker-pill button */
+.btn-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1.75rem;
-  background: transparent;
-  color: #f5f3ef;
-  font-family: var(--font-graffiti);
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
-  border: 1px solid rgba(92, 255, 133, 0.4);
-  transition: all 0.3s ease;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  background: #C5F5E4;
+  color: #0A0A0F;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 2px solid #0A0A0F;
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 #0A0A0F;
+  transition: all 0.15s ease;
   cursor: pointer;
+  white-space: nowrap;
 }
-.spray-btn:hover {
-  background: rgba(92, 255, 133, 0.08);
-  border-color: #5cff85;
-  box-shadow: 0 0 30px rgba(92, 255, 133, 0.3);
+.btn-pill:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #0A0A0F;
+}
+.btn-pill:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 #0A0A0F;
 }
 
-/* Marquee tape */
-.marquee-tape {
-  background: #5cff85;
-  color: #05070a;
-  padding: 0.75rem 0;
-  overflow: hidden;
+.btn-pill-glow {
+  background: #2EE862;
+  color: #0A0A0F;
+}
+
+.btn-pill-blue {
+  background: #2B5FAD;
+  color: #F5F3EF;
+}
+
+/* Spray-paint text overlay — red graffiti tag over underlying words */
+.spray-tag {
   position: relative;
+  display: inline-block;
+  font-family: var(--font-spray);
+  color: #2EE862;
+  text-transform: uppercase;
+  filter: drop-shadow(0 0 1px rgba(46, 232, 98, 0.4));
+}
+
+.spray-tag::after {
+  content: "";
+  position: absolute;
+  inset: -8px -4px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(46, 232, 98, 0.12) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Comb/jagged edge utility — for section transitions */
+.jagged-top {
+  -webkit-mask-image: linear-gradient(#000 0 0), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 40' preserveAspectRatio='none'%3E%3Cpath d='M0 40 L10 0 L20 40 L30 0 L40 40 L50 0 L60 40 L70 0 L80 40 Z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+/* Sticker frame — for images */
+.sticker {
+  border: 3px solid #0A0A0F;
+  box-shadow: 6px 6px 0 #0A0A0F;
   transform: rotate(-1deg);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+.sticker:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+.sticker-alt {
+  transform: rotate(1deg);
+}
+.sticker-straight {
+  transform: rotate(0deg);
+}
+
+/* Film strip borders for galleries */
+.film-strip {
+  background-image: repeating-linear-gradient(
+    to right,
+    #0A0A0F 0px,
+    #0A0A0F 10px,
+    transparent 10px,
+    transparent 24px
+  );
+  height: 16px;
+}
+
+/* Shake on hover — playful */
+.hover-wiggle:hover {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+/* Chain link divider (Mew uses a paw chain between stats) */
+.chain-link {
+  height: 1px;
+  background: currentColor;
+  flex: 1;
+  opacity: 0.3;
+}
+
+/* Rotated section hat (Mew's red "comb" teeth under marquee) */
+.comb-edge {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 0 L10 30 L20 0 L30 30 L40 0 L50 30 L60 0 L70 30 L80 0 L90 30 L100 0 Z' fill='%232B5FAD'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 60px 30px;
+}
+
+.comb-edge-top {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30 L10 0 L20 30 L30 0 L40 30 L50 0 L60 30 L70 0 L80 30 L90 0 L100 30 Z' fill='%232B5FAD'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 60px 30px;
+  transform: scaleY(-1);
 }

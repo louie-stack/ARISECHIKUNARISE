@@ -1,81 +1,75 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative h-screen min-h-[720px] w-full overflow-hidden bg-ink-900">
-      {/* Hero image — replace with your Chikun hero shot */}
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('/art/hero/chikun-hero.png')"
-          }}
-        />
-        {/* Gradient vignette for drama */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-ink-900/40 to-ink-900" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink-900/60 via-transparent to-ink-900/60" />
-      </div>
-
-      {/* Rain overlay */}
-      <div className="rain-layer" aria-hidden />
-
-      {/* Scanline overlay */}
-      <div
-        className="absolute inset-0 opacity-10 pointer-events-none mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(0,0,0,0.4) 2px, rgba(0,0,0,0.4) 3px)"
-        }}
-      />
-
-      {/* Main content */}
-      <div className="relative z-10 h-full flex flex-col justify-end pb-24 px-6 md:px-16">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="max-w-5xl"
-        >
-          {/* Small tag above title */}
-          <p className="font-mono text-xs tracking-[0.4em] text-glow-500 mb-6 animate-flicker">
-            鶏鳴 / THE CRY AT DAWN
-          </p>
-
-          {/* Main title */}
-          <h1 className="font-graffiti text-6xl sm:text-7xl md:text-9xl leading-[0.85] text-bone-100 glow-text">
-            ARISE
-            <br />
-            CHIKUN,
-            <br />
-            ARISE
+    <section className="relative bg-blue text-bone pt-24 md:pt-28 pb-0 overflow-hidden">
+      {/* Massive CHIKUN background letters */}
+      <div className="relative px-4 md:px-8">
+        <div className="relative flex items-end justify-center min-h-[70vh] md:min-h-[80vh]">
+          {/* Background giant text */}
+          <h1
+            aria-hidden
+            className="absolute inset-0 flex items-center justify-center font-black text-ink leading-none select-none pointer-events-none"
+            style={{
+              fontSize: "clamp(8rem, 28vw, 28rem)",
+              letterSpacing: "-0.05em"
+            }}
+          >
+            CHIKUN
           </h1>
 
-          {/* Subtitle */}
-          <p className="mt-10 text-bone-100/70 text-base md:text-lg max-w-xl tracking-wide leading-relaxed">
-            For thirteen years you chanted his name. You thought it was a meme.
+          {/* Character image — sits in front of the letters */}
+          <img
+            src="/art/hero/chikun-hero.png"
+            alt="Chikun"
+            className="relative z-10 max-h-[60vh] md:max-h-[75vh] w-auto object-contain drop-shadow-[8px_8px_0_rgba(10,10,15,0.6)]"
+          />
+        </div>
+
+        {/* Copy row */}
+        <div className="relative z-10 pb-12 md:pb-20 grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+          {/* Left copy */}
+          <div className="font-black text-bone text-2xl md:text-4xl leading-[0.95] tracking-tight">
+            For too long
             <br />
-            <span className="text-glow-400">He heard every word.</span>
-          </p>
+            Chikun has been
+            <br />
+            <span className="spray-tag text-3xl md:text-5xl inline-block mt-1">
+              forgotten.
+            </span>
+          </div>
 
-          {/* Scroll hint */}
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="mt-14 font-mono text-xs tracking-[0.3em] text-bone-100/40"
-          >
-            ↓ SCROLL
-          </motion.div>
-        </motion.div>
+          {/* Center CTA */}
+          <div className="flex flex-col items-center gap-3">
+            <Link href="#lore" className="btn-pill btn-pill-glow text-base md:text-lg">
+              ↓ The Revolution Has Begun
+            </Link>
+          </div>
+
+          {/* Right copy */}
+          <div className="font-black text-bone text-2xl md:text-4xl leading-[0.95] tracking-tight md:text-right">
+            The chant was
+            <br />
+            never a cheer.
+            <br />
+            <span className="text-glow text-3xl md:text-5xl">It was a summons.</span>
+          </div>
+        </div>
       </div>
 
-      {/* Corner tags */}
-      <div className="absolute top-24 right-6 md:right-16 z-10 font-mono text-xs tracking-[0.3em] text-bone-100/40">
-        LITVM CITY / CH.01
-      </div>
-      <div className="absolute bottom-6 right-6 md:right-16 z-10 font-mono text-xs tracking-[0.3em] text-bone-100/40">
-        LAT 40.7128° N / LONG 74.0060° W
+      {/* Jagged comb edge transitioning into next section */}
+      <div className="relative h-8 bg-blue">
+        <div
+          className="absolute inset-x-0 bottom-0 h-8"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30' preserveAspectRatio='none'%3E%3Cpath d='M0 30 L10 0 L20 30 L30 0 L40 30 L50 0 L60 30 L70 0 L80 30 L90 0 L100 30 Z' fill='%230A0A0F'/%3E%3C/svg%3E\")",
+            backgroundRepeat: "repeat-x",
+            backgroundSize: "60px 30px"
+          }}
+        />
       </div>
     </section>
   );
