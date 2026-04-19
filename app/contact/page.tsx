@@ -29,17 +29,21 @@ export default function ContactPage() {
 
       <section className="bg-blue text-bone py-20 md:py-28 px-4 md:px-8 text-center">
         <h1 className="font-black leading-[0.9] tracking-tight" style={{ fontSize: "clamp(3rem, 12vw, 10rem)" }}>
-          Send a{" "}
+          SPEAK
+          <br />
           <span className="relative inline-block">
-            <span>signal</span>
+            <span>UP.</span>
             <span
               className="absolute inset-0 flex items-center justify-center spray-tag"
               style={{ transform: "rotate(-3deg)", color: "#2EE862", fontSize: "inherit" }}
             >
-              BAWK
+              ARISE
             </span>
           </span>
         </h1>
+        <p className="prose-normal mt-8 max-w-2xl mx-auto text-lg md:text-xl">
+          Press. Collabs. Old trollbox memories you want on record. The transmission stays open.
+        </p>
       </section>
 
       <section className="bg-bone text-ink py-20 md:py-28 px-4 md:px-8">
@@ -47,11 +51,11 @@ export default function ContactPage() {
           {status === "sent" ? (
             <div className="bg-glow border-4 border-ink rounded-3xl p-12 text-center shadow-[8px_8px_0_#0A0A0F]">
               <h2 className="font-black text-4xl md:text-5xl leading-tight tracking-tight mb-4">
-                Signal received.
+                Got it.
               </h2>
-              <p className="prose-normal text-lg">Chikun reads every message. He does not always reply. But he always reads.</p>
+              <p className="prose-normal text-lg">I read every one. I don&apos;t always answer. I always remember.</p>
               <button onClick={() => setStatus("idle")} className="btn-pill mt-8">
-                Send Another →
+                SEND ANOTHER →
               </button>
             </div>
           ) : (

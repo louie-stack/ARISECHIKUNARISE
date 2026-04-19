@@ -1,73 +1,51 @@
 "use client";
 
-import Link from "next/link";
 import { Instagram, Music2, Send } from "lucide-react";
+import { useRef } from "react";
+import { useScrollProgress } from "@/hooks/useScrollProgress";
+
+const HERO_SRC = "/art/hero/chikun-hero.png";
 
 export default function Hero() {
-  return (
-    <section className="relative bg-blue text-bone overflow-hidden min-h-screen">
-      {/* Main hero composition — starts at top, nav floats over */}
-      <div className="relative px-4 md:px-8 pt-24 md:pt-28 pb-40">
-        {/* The big CHIKUN letters behind the character */}
-        <div className="relative flex items-center justify-center">
-          {/* Background giant text — positioned mid-frame */}
-          <h1
-            aria-hidden
-            className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center font-black text-ink leading-[0.85] select-none pointer-events-none tracking-tighter"
-            style={{ fontSize: "clamp(9rem, 24vw, 24rem)" }}
-          >
-            CHIKUN
-          </h1>
+  const sectionRef = useRef<HTMLElement>(null);
+  useScrollProgress(sectionRef);
 
-          {/* Character image — stands in front of letters at same vertical position */}
-          <div className="relative z-10 flex items-end justify-center w-full">
+  return (
+    <section
+      ref={sectionRef}
+      className="relative bg-blue text-bone overflow-hidden min-h-screen flex flex-col"
+    >
+      <h1 className="sr-only">CHIKUN</h1>
+      {/* Composition area — hero banner with CHIKUN wordmark baked into the artwork */}
+      <div className="relative flex-1 flex items-center justify-center px-2 md:px-4 pt-20 md:pt-24 pb-16 md:pb-20">
+        <div className="relative w-full flex items-center justify-center">
+          <div
+            className="will-change-transform"
+            style={{
+              transform:
+                "translate3d(0, calc(var(--scroll-progress, 0) * -80px), 0)"
+            }}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/art/hero/chikun-hero.png"
-              alt="Chikun"
-              className="relative z-10 h-[55vh] md:h-[70vh] w-auto object-contain drop-shadow-[8px_8px_0_rgba(10,10,15,0.5)]"
+              src={HERO_SRC}
+              alt="Chikun standing triumphant over fallen henchmen, CHIKUN wordmark behind"
+              className="relative z-10 h-[75vh] md:h-[90vh] max-w-full w-auto object-contain animate-float-slow"
             />
           </div>
         </div>
       </div>
 
-      {/* Bottom copy row — absolute positioned corner anchors */}
-      <div className="absolute bottom-20 md:bottom-24 left-0 right-0 px-6 md:px-12 grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 items-end z-20 pointer-events-none">
-        <div className="font-black text-bone leading-[0.95] tracking-tight col-span-1">
-          <p className="text-xl md:text-3xl lg:text-4xl">
-            For too long <br />
-            Chikun has been
-          </p>
-          <p className="mt-1 text-2xl md:text-4xl lg:text-5xl">
-            <span className="spray-tag">forgotten.</span>
-          </p>
-        </div>
-
-        <div className="hidden md:flex items-center justify-center col-span-1 pointer-events-auto">
-          <Link href="#lore" className="btn-pill btn-pill-glow text-base whitespace-nowrap">
-            ↓ The Revolution Has Begun
-          </Link>
-        </div>
-
-        <div className="font-black text-bone leading-[0.95] tracking-tight text-right col-span-1">
-          <p className="text-xl md:text-3xl lg:text-4xl">
-            The chant was <br />
-            never a cheer.
-          </p>
-          <p className="mt-1 text-2xl md:text-4xl lg:text-5xl text-glow">It was a summons.</p>
-        </div>
-      </div>
-
-      {/* Bottom-left: ↓ THE REVOLUTION HAS BEGUN — mobile only */}
+      {/* Mobile-only cue */}
       <div className="absolute bottom-4 left-4 flex items-center gap-3 z-20 md:hidden">
         <span className="text-bone text-2xl">↓</span>
         <p className="font-black text-bone text-xs tracking-wider leading-tight">
-          THE REVOLUTION <br />
-          HAS BEGUN
+          THE CHANT <br />
+          RETURNS
         </p>
       </div>
 
-      {/* Bottom-right: social icons */}
+      {/* Social icons */}
       <div className="absolute bottom-4 right-4 md:right-8 flex items-center gap-3 z-20">
         <a
           href="https://instagram.com"

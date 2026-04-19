@@ -6,7 +6,7 @@ import Footer from "@/components/ui/Footer";
 export const metadata: Metadata = {
   title: "ARISE CHIKUN, ARISE",
   description:
-    "The forgotten mascot. The chant was a summons. Welcome to LitVM City."
+    "The first Litecoin meme returns. Born in the trollboxes of the old world. Now stretching his wings on LitVM."
 };
 
 export default function RootLayout({

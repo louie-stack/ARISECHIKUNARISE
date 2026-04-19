@@ -1,10 +1,10 @@
 import Hero from "@/components/sections/Hero";
 import Marquee from "@/components/sections/Marquee";
-import PoweredByLitVM from "@/components/sections/PoweredByLitVM";
 import Strongholds from "@/components/sections/Strongholds";
 import NewEra from "@/components/sections/NewEra";
-import ChikunTales from "@/components/sections/ChikunTales";
-import Media from "@/components/sections/Media";
+import Resistance from "@/components/sections/Resistance";
+import AriseMarquee from "@/components/sections/AriseMarquee";
+import Arsenal from "@/components/sections/Arsenal";
 import MerchTeaser from "@/components/sections/MerchTeaser";
 
 export default function HomePage() {
@@ -16,29 +16,24 @@ export default function HomePage() {
       {/* 2. Marquee tape cuts across right after hero */}
       <Marquee
         variant="mint"
-        items={[
-          "ARISE CHIKUN ARISE",
-          "THE FORGOTTEN RETURN",
-          "THE CHANT WAS A SUMMONS",
-          "LITVM CITY",
-          "鶏鳴"
-        ]}
+        items={["POWERED BY LITECOIN", "ARISE ON LITVM"]}
+        showSeparators={false}
       />
 
-      {/* 3. Powered by LitVM */}
-      <PoweredByLitVM />
-
-      {/* 4. Strongholds */}
+      {/* 3. Strongholds (ends with tilted film strip that acts as the divider into NewEra) */}
       <Strongholds />
 
-      {/* 5. New Era */}
+      {/* 4. New Era — tokenomics intent, stats, quote, and "I'll Show You The Truth" */}
       <NewEra />
 
-      {/* 6. Chikun Tales */}
-      <ChikunTales />
+      {/* 5. Meet the Resistance — character showcase */}
+      <Resistance />
 
-      {/* 7. Media */}
-      <Media />
+      {/* 6. Rolling "ARISE CHIKUN ARISE" strip — transition into the Arsenal */}
+      <AriseMarquee />
+
+      {/* 7. The Arsenal — meme/gif/sticker/pfp vault with filter pills */}
+      <Arsenal />
 
       {/* 8. Merch teaser */}
       <MerchTeaser />

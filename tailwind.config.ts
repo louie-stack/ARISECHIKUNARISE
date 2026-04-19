@@ -33,7 +33,8 @@ const config: Config = {
           deep: "#1FB84D"
         },
         blood: {
-          DEFAULT: "#C41E3A"      // reserved for spray-paint graffiti overlays
+          DEFAULT: "#C41E3A",     // reserved for spray-paint graffiti overlays
+          light: "#FF8095"        // readable coral-red for inline highlights on blue
         }
       },
       fontFamily: {
@@ -43,10 +44,16 @@ const config: Config = {
       animation: {
         "marquee": "marquee 30s linear infinite",
         "marquee-slow": "marquee 60s linear infinite",
+        "marquee-fast": "marquee 18s linear infinite",
         "spin-slow": "spin 20s linear infinite",
+        "spin-slower": "spin 40s linear infinite",
         "scroll-x": "scroll-x 60s linear infinite",
         "scroll-x-reverse": "scroll-x-reverse 60s linear infinite",
-        "wiggle": "wiggle 3s ease-in-out infinite"
+        "wiggle": "wiggle 3s ease-in-out infinite",
+        "float": "float 4s ease-in-out infinite",
+        "float-slow": "float 7s ease-in-out infinite",
+        "pulse-ring": "pulse-ring 2.2s ease-out infinite",
+        "shake": "shake 0.6s ease-in-out infinite"
       },
       keyframes: {
         marquee: {
@@ -64,6 +71,20 @@ const config: Config = {
         wiggle: {
           "0%, 100%": { transform: "rotate(-1deg)" },
           "50%": { transform: "rotate(1deg)" }
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" }
+        },
+        "pulse-ring": {
+          "0%": { transform: "scale(0.9)", opacity: "0.7" },
+          "100%": { transform: "scale(1.25)", opacity: "0" }
+        },
+        shake: {
+          "0%, 100%": { transform: "translate(0, 0) rotate(0)" },
+          "25%": { transform: "translate(-1px, 1px) rotate(-0.5deg)" },
+          "50%": { transform: "translate(1px, -1px) rotate(0.5deg)" },
+          "75%": { transform: "translate(-1px, -1px) rotate(-0.5deg)" }
         }
       }
     }

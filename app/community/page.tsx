@@ -5,16 +5,16 @@ export const metadata = {
 };
 
 const GROUPS = [
-  { name: "X / TWITTER", handle: "@chikun", desc: "Daily fragments. On-chain messages. The signal.", href: "#" },
-  { name: "TELEGRAM", handle: "t.me/chikun", desc: "Where the chant lives. Real-time voices.", href: "#" },
-  { name: "DISCORD", handle: "discord.gg/chikun", desc: "The archive. Lore channels, art drops.", href: "#" },
-  { name: "INSTAGRAM", handle: "@chikun", desc: "Visual fragments from LitVM City.", href: "#" }
+  { name: "X / TWITTER", handle: "@chikun", desc: "Posts. Fragments. Occasional screaming.", href: "#" },
+  { name: "TELEGRAM", handle: "t.me/chikun", desc: "Live box. If you remember Mintpal, this is your room.", href: "#" },
+  { name: "DISCORD", handle: "discord.gg/chikun", desc: "Archive and atrium. Lore channels, art drops, long arguments about block times.", href: "#" },
+  { name: "INSTAGRAM", handle: "@chikun", desc: "Frames from the city.", href: "#" }
 ];
 
 const EVENTS = [
-  { date: "TBA", title: "The First Chant", location: "Online / Global", desc: "Launch night. Coordinated posts. The signal goes live." },
-  { date: "TBA", title: "LitVM City / Open Studio", location: "Discord Live", desc: "Behind-the-scenes. Prompt-by-prompt, scene-by-scene." },
-  { date: "TBA", title: "Rise Week", location: "Community Wide", desc: "Seven days. Seven pieces of new art. One coordinated chant." }
+  { date: "TBA", title: "FIRST CHANT", location: "ONLINE / GLOBAL", desc: "Launch night. Coordinated posts across every platform. The signal goes live at the same minute." },
+  { date: "TBA", title: "OPEN STUDIO", location: "DISCORD LIVE", desc: "Behind the curtain. How the art gets made. Which prompts got laughed out of the room." },
+  { date: "TBA", title: "RISE WEEK", location: "COMMUNITY WIDE", desc: "Seven days. Seven drops. One chant. The rest of crypto gets to watch." }
 ];
 
 export default function CommunityPage() {
@@ -27,25 +27,29 @@ export default function CommunityPage() {
       {/* Hero */}
       <section className="bg-blue text-bone py-20 md:py-28 px-4 md:px-8 text-center">
         <h1 className="font-black leading-[0.9] tracking-tight" style={{ fontSize: "clamp(3rem, 12vw, 10rem)" }}>
-          The old heads
+          THE BOX
           <br />
+          NEVER{" "}
           <span className="relative inline-block">
-            <span>gather</span>
+            <span>CLOSED.</span>
             <span
               className="absolute inset-0 flex items-center justify-center spray-tag"
               style={{ transform: "rotate(-3deg)", color: "#2EE862", fontSize: "inherit" }}
             >
-              RETURN
+              OPEN
             </span>
           </span>
         </h1>
+        <p className="prose-normal mt-8 max-w-2xl mx-auto text-lg md:text-xl">
+          You typed the chant in 2014. You held through the winters. You&apos;re still here. Good.
+        </p>
       </section>
 
       {/* Groups */}
       <section className="bg-bone text-ink py-20 md:py-28 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-black text-center mb-12 leading-none tracking-tight" style={{ fontSize: "clamp(2rem, 7vw, 5rem)" }}>
-            Groups
+            WHERE WE TALK
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {GROUPS.map((g, i) => (
@@ -71,7 +75,7 @@ export default function CommunityPage() {
       <section className="bg-ink text-bone py-20 md:py-28 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
           <h2 className="font-black text-center mb-12 leading-none tracking-tight" style={{ fontSize: "clamp(2rem, 7vw, 5rem)" }}>
-            Events
+            WHEN WE GATHER
           </h2>
           <div className="space-y-4">
             {EVENTS.map((e, i) => (

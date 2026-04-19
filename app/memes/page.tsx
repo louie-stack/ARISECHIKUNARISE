@@ -7,6 +7,12 @@ import Marquee from "@/components/sections/Marquee";
 
 type MemeType = "all" | "static" | "gif";
 
+const FILTER_LABELS: Record<MemeType, string> = {
+  all: "ALL",
+  static: "STILLS",
+  gif: "MOTION"
+};
+
 type Meme = {
   src: string;
   title: string;
@@ -49,9 +55,10 @@ export default function MemesPage() {
           className="font-black leading-[0.9] tracking-tight"
           style={{ fontSize: "clamp(3rem, 12vw, 10rem)" }}
         >
-          Spread the{" "}
+          GIVE IT
+          <br />
           <span className="relative inline-block">
-            <span>signal</span>
+            <span>LEGS.</span>
             <span
               className="absolute inset-0 flex items-center justify-center spray-tag"
               style={{
@@ -65,8 +72,7 @@ export default function MemesPage() {
           </span>
         </h1>
         <p className="prose-normal mt-8 max-w-2xl mx-auto text-lg md:text-xl">
-          Every meme is a stone in the wall. Every share is a voice in the
-          chant. Download, remix, post.
+          Take what you need. Post what you want. Tag it so we can find you. The chant travels on your shoulders.
         </p>
       </section>
 
@@ -83,7 +89,7 @@ export default function MemesPage() {
                   filter === f && "!bg-glow"
                 )}
               >
-                {f.toUpperCase()}
+                {FILTER_LABELS[f]}
               </button>
             ))}
           </div>
@@ -130,8 +136,8 @@ export default function MemesPage() {
           </div>
 
           <p className="mt-20 text-center prose-normal text-lg">
-            Free to download. Free to remix. Tag{" "}
-            <span className="font-black">#arisechikun</span>.
+            Free. Forever. Tag{" "}
+            <span className="font-black">#arisechikun</span> and the old heads come running.
           </p>
         </div>
       </section>
