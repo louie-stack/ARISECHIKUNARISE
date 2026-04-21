@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ArisGame from "./ArisGame";
+import Leaderboard from "./Leaderboard";
 
 export const metadata: Metadata = {
   title: "ARISE · Chikun",
@@ -10,10 +11,13 @@ export const metadata: Metadata = {
 export default function ArisePage() {
   return (
     <section
-      className="min-h-screen flex items-center justify-center px-2 pt-20 pb-6"
+      className="min-h-screen flex flex-col items-center px-2 pt-20 pb-12"
       style={{ backgroundColor: "#2b5ede" }}
     >
-      <ArisGame />
+      <div className="flex items-center justify-center w-full">
+        <ArisGame />
+      </div>
+      <Leaderboard />
     </section>
   );
 }
