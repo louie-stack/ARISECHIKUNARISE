@@ -280,6 +280,7 @@ export default function ArisGame() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [submittedEntry, setSubmittedEntry] = useState(false);
+  const [portraitBlocked, setPortraitBlocked] = useState(false);
 
   // ============================================================
   // LIFECYCLE — asset load, save load
@@ -331,6 +332,33 @@ export default function ArisGame() {
     // Seed scrolling headlines
     headlinesRef.current = seedHeadlines();
   }, []);
+
+  // Detect portrait orientation on small screens — the game is 16:9 and
+  // cramming it into portrait leaves Chikun tiny. Show a rotate-device prompt
+  // and auto-pause a run in progress so deaths don't pile up invisibly.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const check = () => {
+      // Phones only — iPads (>=700 portrait) still have enough room to show a
+      // letterboxed landscape canvas without asking the user to rotate.
+      const isSmall = window.innerWidth < 700;
+      const isPortrait = window.innerHeight > window.innerWidth;
+      setPortraitBlocked(isSmall && isPortrait);
+    };
+    check();
+    window.addEventListener("resize", check);
+    window.addEventListener("orientationchange", check);
+    return () => {
+      window.removeEventListener("resize", check);
+      window.removeEventListener("orientationchange", check);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (portraitBlocked && stateRef.current === "playing") {
+      setPaused(true);
+    }
+  }, [portraitBlocked]);
 
   // ============================================================
   // SPRITE SKIN HELPERS
@@ -649,7 +677,7 @@ export default function ArisGame() {
   // UPDATE
   // ============================================================
   const update = (dt: number, now: number) => {
-    if (paused) return;
+    if (paused || portraitBlocked) return;
     const state = stateRef.current;
 
     // Decay juice state every frame regardless of freeze
@@ -2218,12 +2246,37 @@ export default function ArisGame() {
 
   return (
     <div className="relative mx-auto flex w-full flex-col items-center select-none">
+      {portraitBlocked && (
+        <div
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 text-center"
+          style={{ background: "#0a0d12" }}
+        >
+          <div className="arise-rotate-icon mb-6">
+            <div className="relative w-14 h-24 border-[3px] border-white rounded-lg">
+              <div className="absolute top-1 left-1/2 -translate-x-1/2 w-6 h-1 bg-white/40 rounded" />
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 border-2 border-white/40 rounded-full" />
+            </div>
+          </div>
+          <div className="text-white font-black text-xl sm:text-2xl tracking-[0.2em] mb-2">
+            ROTATE YOUR DEVICE
+          </div>
+          <div className="text-[#2dff5c] font-black text-[11px] tracking-[0.35em] mb-6">
+            ARISE IS BEST FLOWN IN LANDSCAPE
+          </div>
+          <div className="text-white/50 font-black text-[10px] tracking-[0.3em] max-w-[260px] leading-relaxed">
+            TURN YOUR PHONE SIDEWAYS TO RECLAIM THE SKY
+          </div>
+        </div>
+      )}
       <div
-        className="relative overflow-hidden border-[3px] border-black rounded-[20px] shadow-[8px_8px_0_0_#000]"
+        className="ariseFrame relative overflow-hidden border-[3px] border-black rounded-[14px] sm:rounded-[20px] shadow-[4px_4px_0_0_#000] sm:shadow-[8px_8px_0_0_#000]"
         style={{
           aspectRatio: `${CFG.canvas.w} / ${CFG.canvas.h}`,
-          width: `min(100%, calc(86vh * ${CFG.canvas.w} / ${CFG.canvas.h}))`,
-          maxHeight: "86vh",
+          // Fit within the viewport: prefer height-driven sizing, fall back to
+          // full width. On phones (small landscape) we use more of the vertical
+          // space because the nav/footer take proportionally less.
+          width: `min(100%, calc(var(--arise-vh, 86vh) * ${CFG.canvas.w} / ${CFG.canvas.h}))`,
+          maxHeight: "var(--arise-vh, 86vh)",
           backgroundColor: ZONES[0].palette.skyMid,
         }}
       >

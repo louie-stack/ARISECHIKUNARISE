@@ -43,17 +43,17 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      <div className="border-2 border-black bg-[#0a0d12] rounded-xl overflow-hidden shadow-[6px_6px_0_0_#000]">
-        <div className="grid grid-cols-[40px_1fr_80px_80px_90px] gap-1 px-3 py-2 bg-black text-[10px] tracking-[0.25em] text-white/70 font-black">
-          <div>#</div>
-          <div>NAME</div>
-          <div className="text-right">SCORE</div>
-          <div className="text-right">COINS</div>
-          <div className="text-right">ZONE</div>
+      <div className="border-2 border-black bg-[#0a0d12] rounded-xl overflow-hidden shadow-[4px_4px_0_0_#000] sm:shadow-[6px_6px_0_0_#000]">
+        <div className="flex items-center gap-2 px-3 py-2 bg-black text-[10px] tracking-[0.25em] text-white/70 font-black">
+          <div className="w-6 sm:w-8">#</div>
+          <div className="flex-1">NAME</div>
+          <div className="w-14 sm:w-16 text-right">SCORE</div>
+          <div className="hidden sm:block w-16 text-right">COINS</div>
+          <div className="hidden sm:block w-20 text-right">ZONE</div>
         </div>
 
         {entries.length === 0 ? (
-          <div className="px-3 py-8 text-center text-white/50 text-sm font-black tracking-widest">
+          <div className="px-3 py-8 text-center text-white/50 text-xs sm:text-sm font-black tracking-widest">
             NO ENTRIES YET · BE THE FIRST TO FLY
           </div>
         ) : (
@@ -64,12 +64,12 @@ export default function Leaderboard() {
               return (
                 <div
                   key={`${e.timestamp}-${i}`}
-                  className={`grid grid-cols-[40px_1fr_80px_80px_90px] gap-1 px-3 py-2 border-t border-white/5 items-center ${
+                  className={`flex items-center gap-2 px-3 py-2 border-t border-white/5 ${
                     isTop ? "bg-[#00d632]/10" : ""
                   }`}
                 >
                   <div
-                    className={`font-black text-sm ${
+                    className={`w-6 sm:w-8 font-black text-sm ${
                       i === 0
                         ? "text-[#ffcf3a]"
                         : i === 1
@@ -81,14 +81,24 @@ export default function Leaderboard() {
                   >
                     {i + 1}
                   </div>
-                  <div className="font-black tracking-widest text-sm truncate">
-                    {e.name}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-black tracking-widest text-sm truncate">
+                      {e.name}
+                    </div>
+                    {/* Narrow screens: show coins + zone inline beneath name */}
+                    <div className="sm:hidden flex gap-2 text-[9px] tracking-[0.2em] text-white/50 font-black mt-0.5">
+                      <span className="text-[#ffcf3a]">Ł {e.coins}</span>
+                      <span>·</span>
+                      <span className="truncate">{zoneName}</span>
+                    </div>
                   </div>
-                  <div className="text-right font-black">{e.score}</div>
-                  <div className="text-right text-[#ffcf3a] font-black">
+                  <div className="w-14 sm:w-16 text-right font-black">
+                    {e.score}
+                  </div>
+                  <div className="hidden sm:block w-16 text-right text-[#ffcf3a] font-black">
                     {e.coins}
                   </div>
-                  <div className="text-right text-[10px] tracking-[0.2em] text-white/70 font-black truncate">
+                  <div className="hidden sm:block w-20 text-right text-[10px] tracking-[0.2em] text-white/70 font-black truncate">
                     {zoneName}
                   </div>
                 </div>

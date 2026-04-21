@@ -341,6 +341,54 @@ body {
   animation: cursor-blink 1s steps(1) infinite;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   ARISE game — mobile tuning. Desktop behavior is unchanged: the
+   inline style reads `var(--arise-vh, 86vh)` and falls back to 86vh
+   when no rule below matches.
+   ───────────────────────────────────────────────────────────── */
+.arise-page {
+  /* Defaults (desktop): match the previous px-2 padding. */
+  padding-left: max(8px, env(safe-area-inset-left));
+  padding-right: max(8px, env(safe-area-inset-right));
+  /* Don't let the home-indicator clip the leaderboard. */
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+@media (min-width: 640px) {
+  .arise-page {
+    padding-bottom: max(48px, env(safe-area-inset-bottom));
+  }
+}
+/* Prevent iOS pull-to-refresh while playing; only scope to this page. */
+.arise-page {
+  overscroll-behavior-y: contain;
+}
+
+@media (max-width: 820px) and (orientation: landscape) {
+  .ariseFrame {
+    --arise-vh: 78dvh;
+  }
+}
+@media (max-height: 420px) {
+  .ariseFrame {
+    --arise-vh: 88dvh;
+  }
+}
+
+@keyframes arise-rotate-hint {
+  0%, 30% {
+    transform: rotate(0deg);
+  }
+  55%, 75% {
+    transform: rotate(-90deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+.arise-rotate-icon {
+  animation: arise-rotate-hint 2.4s cubic-bezier(0.68, -0.2, 0.27, 1.2) infinite;
+}
+
 .comb-edge-top {
   position: absolute;
   top: -1px;

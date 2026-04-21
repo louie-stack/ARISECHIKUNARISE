@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function ArisePage() {
   return (
     <section
-      className="min-h-screen flex flex-col items-center px-2 pt-20 pb-12"
+      className="arise-page min-h-screen flex flex-col items-center pt-14 sm:pt-20 pb-6 sm:pb-12"
       style={{ backgroundColor: "#2b5ede" }}
     >
       <div className="flex items-center justify-center w-full">
