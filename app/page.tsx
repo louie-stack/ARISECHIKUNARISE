@@ -2,8 +2,7 @@ import Hero from "@/components/sections/Hero";
 import Marquee from "@/components/sections/Marquee";
 import Strongholds from "@/components/sections/Strongholds";
 import NewEra from "@/components/sections/NewEra";
-import Resistance from "@/components/sections/Resistance";
-import AriseMarquee from "@/components/sections/AriseMarquee";
+import AriseShowcase from "@/components/sections/AriseShowcase";
 import Arsenal from "@/components/sections/Arsenal";
 import MerchTeaser from "@/components/sections/MerchTeaser";
 
@@ -16,7 +15,7 @@ export default function HomePage() {
       {/* 2. Marquee tape cuts across right after hero */}
       <Marquee
         variant="mint"
-        items={["POWERED BY LITECOIN", "ARISE ON LITVM"]}
+        items={["POWERED BY LITECOIN", "BUILT ON LITVM"]}
         showSeparators={false}
       />
 
@@ -26,16 +25,13 @@ export default function HomePage() {
       {/* 4. New Era — tokenomics intent, stats, quote, and "I'll Show You The Truth" */}
       <NewEra />
 
-      {/* 5. Meet the Resistance — character showcase */}
-      <Resistance />
+      {/* 5. ARISE minigame showcase — bento grid spotlighting the /arise flyer */}
+      <AriseShowcase />
 
-      {/* 6. Rolling "ARISE CHIKUN ARISE" strip — transition into the Arsenal */}
-      <AriseMarquee />
-
-      {/* 7. The Arsenal — meme/gif/sticker/pfp vault with filter pills */}
+      {/* 6. The Arsenal — meme/gif/sticker/pfp vault with filter pills */}
       <Arsenal />
 
-      {/* 8. Merch teaser */}
+      {/* 7. Merch teaser */}
       <MerchTeaser />
     </>
   );

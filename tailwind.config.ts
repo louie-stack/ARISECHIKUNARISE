@@ -11,7 +11,7 @@ const config: Config = {
         // Chikun's section palette — mirrors Mew's red/black/white logic
         // but with Litecoin blue as the dominant hue
         blue: {
-          DEFAULT: "#2B5FAD",     // primary section background
+          DEFAULT: "#2B5FAD",     // primary section background — matches the hero banner
           dark: "#1E4480",        // hover / darker variant
           light: "#4A7BC8"        // highlight variant
         },

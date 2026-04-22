@@ -1,18 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
-import { useCountUp } from "@/hooks/useCountUp";
 
 export default function NewEra() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const headingState = useRevealOnScroll(headingRef);
 
   const statsRef = useRef<HTMLDivElement>(null);
-  const supply = useCountUp(statsRef, 84_000_000, 2000);
-  const burned = useCountUp(statsRef, 84, 1400);
-  const believers = useCountUp(statsRef, 16, 1400);
 
   return (
     <section className="relative bg-bone text-ink -mt-60 md:-mt-80 pt-64 md:pt-80 pb-24 md:pb-36 px-4 md:px-8 overflow-hidden">
@@ -90,7 +85,7 @@ export default function NewEra() {
             className="tape absolute -top-4 left-1/2 -translate-x-1/2"
             style={{ transform: "translateX(-50%) rotate(-2deg)" }}
           >
-            OFFICIAL LEDGER
+            $CHIKUN
           </span>
 
           <div>
@@ -102,7 +97,7 @@ export default function NewEra() {
               className="font-black leading-none tracking-tight stat-value"
               style={{ fontSize: "clamp(2.5rem, 9vw, 7rem)" }}
             >
-              {supply.toLocaleString("en-US")}
+              TBD
             </p>
           </div>
 
@@ -115,7 +110,7 @@ export default function NewEra() {
                 className="font-black leading-none stat-value"
                 style={{ fontSize: "clamp(2rem, 6vw, 4.5rem)" }}
               >
-                {burned}%
+                TBD
               </p>
             </div>
             <div>
@@ -126,7 +121,7 @@ export default function NewEra() {
                 className="font-black leading-none stat-value"
                 style={{ fontSize: "clamp(2rem, 6vw, 4.5rem)" }}
               >
-                {believers}%
+                TBD
               </p>
             </div>
             <div>
@@ -143,26 +138,39 @@ export default function NewEra() {
           </div>
         </div>
 
-        {/* Spinning Ł coin with pulsing glow ring */}
+        {/* $CHIKUN coin — gentle up-and-down bounce */}
+        <style jsx>{`
+          @keyframes chikunCoinBounce {
+            0%, 100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-18px);
+            }
+          }
+          .chikun-coin-spin {
+            animation: chikunCoinBounce 3s ease-in-out infinite;
+          }
+        `}</style>
         <div className="mt-24 flex justify-center">
-          <div className="relative w-36 h-36 md:w-44 md:h-44">
-            {/* Pulsing rings */}
-            <span
-              aria-hidden
-              className="absolute inset-0 rounded-full border-4 border-glow animate-pulse-ring"
+          <div className="relative w-72 h-72 md:w-96 md:h-96">
+            {/* Coin image — tilt/bounce loop. multiply blend hides the white
+                export bg against the bone section. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/arise/chikun-coin-1.png"
+              alt="$CHIKUN coin"
+              draggable={false}
+              className="chikun-coin-spin absolute inset-0 w-full h-full object-contain select-none"
+              style={{ mixBlendMode: "multiply" }}
             />
-            <span
+
+            {/* Small $CHIKUN tag under the coin */}
+            <div
+              className="absolute -bottom-8 left-1/2 -translate-x-1/2 font-black text-ink text-xs tracking-[0.35em]"
               aria-hidden
-              className="absolute inset-0 rounded-full border-4 border-glow animate-pulse-ring"
-              style={{ animationDelay: "1.1s" }}
-            />
-            <div className="absolute inset-0 rounded-full bg-blue border-4 border-ink shadow-[6px_6px_0_#0A0A0F] flex items-center justify-center animate-spin-slow">
-              <span
-                className="font-black text-bone leading-none"
-                style={{ fontSize: "5rem" }}
-              >
-                Ł
-              </span>
+            >
+              $CHIKUN
             </div>
           </div>
         </div>
@@ -170,12 +178,12 @@ export default function NewEra() {
         {/* Quote under the coin */}
         <div className="mt-10 max-w-2xl mx-auto">
           <p className="prose-normal text-xl md:text-2xl italic leading-snug">
-            &ldquo;Litecoin is the result of some of us who joined together... to create a real alternative.&rdquo;
+            &ldquo;Chikun is the result of some of us who joined together... to create a real alternative.&rdquo;
           </p>
           <p className="prose-normal mt-3 text-xs md:text-sm tracking-[0.2em] opacity-60">
-            coblee · Litecoin announcement
+            Fairbrix enthusiast · Chikun announcement
             <br />
-            Bitcointalk, October 7, 2011
+            Chikuntalk, October 1, 2011
           </p>
         </div>
 
@@ -183,20 +191,16 @@ export default function NewEra() {
         <div className="mt-24">
           <h3
             className="font-black leading-[0.9] tracking-tight"
-            style={{ fontSize: "clamp(2.5rem, 10vw, 9rem)" }}
+            style={{ fontSize: "clamp(1.75rem, 4.5vw, 4rem)" }}
           >
-            I&apos;LL SHOW YOU
-            <br />
-            THE TRUTH.
+            DISCLAIMER.
           </h3>
-          <p className="prose-normal mt-10 text-lg md:text-xl max-w-xl mx-auto">
-            For fourteen years they told you where to look.
-            <br />
-            They never told you where to look back.
+          <p className="prose-normal mt-8 text-lg md:text-xl max-w-3xl mx-auto">
+            $CHIKUN is a cultural movement and memecoin. No team promises, no roadmap,
+            no expectation of financial return. Memecoins are extremely volatile and
+            speculative. You can lose everything you put in. Nothing on this site is
+            financial advice. Do your own research. Only ape in what you can afford to lose.
           </p>
-          <Link href="/memes" className="btn-pill mt-10 inline-flex">
-            ENTER THE CITY →
-          </Link>
         </div>
       </div>
     </section>

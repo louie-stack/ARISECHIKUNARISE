@@ -10,13 +10,6 @@ const SOCIALS = [
   { label: "TikTok", href: "https://tiktok.com" }
 ];
 
-const ECOSYSTEM = [
-  { label: "CoinGecko", href: "#" },
-  { label: "CoinMarketCap", href: "#" },
-  { label: "LitVM", href: "#" },
-  { label: "DexScreener", href: "#" }
-];
-
 export default function Footer() {
   const taglineRef = useRef<HTMLDivElement>(null);
   const taglineState = useRevealOnScroll(taglineRef);
@@ -55,24 +48,6 @@ export default function Footer() {
               className="btn-pill"
             >
               {s.label}
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Ecosystem links on blue band */}
-      <div className="bg-blue border-t-4 border-ink">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 flex flex-wrap gap-3 justify-center items-center">
-          <span className="font-black text-bone text-xs tracking-[0.3em]">
-            THE FAMILY →
-          </span>
-          {ECOSYSTEM.map((e) => (
-            <a
-              key={e.label}
-              href={e.href}
-              className="btn-pill text-sm"
-            >
-              {e.label}
             </a>
           ))}
         </div>

@@ -1,7 +1,7 @@
 /**
- * ARISE — Web Audio synthesis. No hosted sound files.
- * SFX are instant one-shots. Music is a layered loop that unlocks tracks
- * as the player's score climbs (drums → bass → lead → pad).
+ * ARISE — Web Audio SFX + looped MP3 soundtrack.
+ * SFX are instant one-shots synthesized on the fly. Music is a pre-recorded
+ * loop routed through the Web Audio graph so master mute still applies.
  */
 
 let audioCtx: AudioContext | null = null;
@@ -15,6 +15,9 @@ export function setMuted(next: boolean) {
   if (masterGain) {
     masterGain.gain.setTargetAtTime(next ? 0 : 0.8, ctxOrNull()?.currentTime ?? 0, 0.02);
   }
+  // Music plays through a plain HTMLAudioElement (not the Web Audio graph),
+  // so masterGain does not reach it — toggle its volume directly.
+  music.applyMute(next);
 }
 export function isMuted() { return muted; }
 
@@ -74,34 +77,51 @@ export function sfxFlap() {
   src.start(t);
 }
 
-export function sfxCoin(combo: number) {
+// Coin pickup — classic two-note ding (B5 → E6) that rings out. Every coin
+// sounds identical regardless of combo count, so streaks stay satisfying
+// instead of turning into a frantic rising blip.
+export function sfxCoin(_combo: number) {
+  void _combo;
   const ctx = ensureAudio();
   const dest = sfx();
   if (!ctx || !dest) return;
   const t = ctx.currentTime;
-  const base = 760 * Math.pow(2, Math.min(combo, 10) / 12);
-  const o = ctx.createOscillator();
-  o.type = "triangle";
-  o.frequency.setValueAtTime(base, t);
-  o.frequency.exponentialRampToValueAtTime(base * 1.5, t + 0.06);
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(0.2, t + 0.008);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
-  o.connect(g).connect(dest);
-  o.start(t);
-  o.stop(t + 0.25);
 
-  const o2 = ctx.createOscillator();
-  o2.type = "sine";
-  o2.frequency.setValueAtTime(base * 2, t);
-  const g2 = ctx.createGain();
-  g2.gain.setValueAtTime(0.0001, t);
-  g2.gain.exponentialRampToValueAtTime(0.08, t + 0.005);
-  g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
-  o2.connect(g2).connect(dest);
-  o2.start(t);
-  o2.stop(t + 0.18);
+  const note = (
+    hz: number,
+    startOffset: number,
+    duration: number,
+    peak: number
+  ) => {
+    const start = t + startOffset;
+    const o = ctx.createOscillator();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(hz, start);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(peak, start + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    o.connect(g).connect(dest);
+    o.start(start);
+    o.stop(start + duration + 0.02);
+  };
+
+  // Two-note ring-out: the low note sets up, the high note holds long enough
+  // to actually ring rather than feeling clipped.
+  note(988, 0, 0.14, 0.32);     // B5 — short announcement
+  note(1318, 0.12, 0.36, 0.36); // E6 — held, the satisfying part
+
+  // High E7 sparkle overtone that sustains under the second note.
+  const spark = ctx.createOscillator();
+  spark.type = "sine";
+  spark.frequency.setValueAtTime(2637, t + 0.12);
+  const sparkG = ctx.createGain();
+  sparkG.gain.setValueAtTime(0.0001, t + 0.12);
+  sparkG.gain.exponentialRampToValueAtTime(0.09, t + 0.128);
+  sparkG.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+  spark.connect(sparkG).connect(dest);
+  spark.start(t + 0.12);
+  spark.stop(t + 0.44);
 }
 
 export function sfxTowerPass() {
@@ -258,6 +278,47 @@ export function sfxTriumph() {
   });
 }
 
+// Combo "ch-ching" — fires on streak milestones (every 10 coins). A rising
+// three-note arpeggio on top of the normal coin sound, with a shimmer tail,
+// so hitting a 10-streak feels meaningfully bigger than a single coin.
+export function sfxComboChing() {
+  const ctx = ensureAudio();
+  const dest = sfx();
+  if (!ctx || !dest) return;
+  const t = ctx.currentTime;
+
+  // Rising arpeggio: E6 → G#6 → B6 (major triad feel).
+  const notes: Array<[number, number]> = [
+    [1318, 0],     // E6
+    [1661, 0.08],  // G#6
+    [1976, 0.16],  // B6
+  ];
+  for (const [hz, offset] of notes) {
+    const o = ctx.createOscillator();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(hz, t + offset);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t + offset);
+    g.gain.exponentialRampToValueAtTime(0.3, t + offset + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + offset + 0.28);
+    o.connect(g).connect(dest);
+    o.start(t + offset);
+    o.stop(t + offset + 0.3);
+  }
+
+  // Sustained B7 shimmer under the arpeggio for the "ching" tail.
+  const shimmer = ctx.createOscillator();
+  shimmer.type = "sine";
+  shimmer.frequency.setValueAtTime(3951, t + 0.04);
+  const shG = ctx.createGain();
+  shG.gain.setValueAtTime(0.0001, t + 0.04);
+  shG.gain.exponentialRampToValueAtTime(0.12, t + 0.06);
+  shG.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+  shimmer.connect(shG).connect(dest);
+  shimmer.start(t + 0.04);
+  shimmer.stop(t + 0.62);
+}
+
 // Crowd chant swell — filtered noise bed with a rising vowel formant.
 export function sfxChant() {
   const ctx = ensureAudio();
@@ -283,397 +344,187 @@ export function sfxChant() {
 }
 
 // ============================================================
-// MUSIC — looping synthwave score.
-// Progression: i–VI–III–VII in A minor (Am – F – C – G), a 2-bar loop at
-// 114 BPM on a 16th-note grid (32 steps, 8 steps per chord). Four layers
-// fade in as the score climbs: drums → bass → arp → pad.
+// MUSIC — pre-recorded soundtrack played by a plain HTMLAudioElement. It does
+// NOT go through the Web Audio graph — some browsers silently fail to route an
+// element through createMediaElementSource, which causes the track to leak
+// out at full volume alongside any gain-controlled copy. Going direct is
+// simpler and predictable. Volume sits well below SFX so it reads as
+// background music.
 // ============================================================
-const SEMI = (base: number, semis: number) => base * Math.pow(2, semis / 12);
+export const MUSIC_URL = "/arise/soundtrack.mp3";
 
-// padBase is A2 (110 Hz). Chord definitions are semitone offsets from A2 so
-// shifting the key only touches one number.
-// Chord "tones" are mid-register voicings used by pad/arp; "root" is the deep
-// bass note (one octave below chord tone root).
-interface Chord {
-  root: number;      // semitones from A2 (bass octave)
-  tones: number[];   // chord tones relative to A2 (for pad + arp scale)
+// Absolute element volume (0..1). SFX bus runs at ~0.8 absolute after master
+// gain, so 0.25 puts music roughly a third the loudness of SFX — clearly
+// background, won't mask coin/flap hits.
+const MUSIC_VOLUME = 0.25;
+
+// Registry pinned to `window` so every soundtrack audio element in the page
+// (game singleton, homepage tile, anything else that registers) is tracked in
+// one place — even across HMR reloads that would otherwise orphan an old
+// `new Audio()` and leave it playing ghost-like in the background. Start()
+// calls pauseOtherSoundtracks(self) to guarantee only one plays at a time.
+type TrackRegistry = Set<HTMLAudioElement>;
+const REGISTRY_KEY = "__ariseSoundtrackRegistry";
+
+function getRegistry(): TrackRegistry | null {
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as { [k: string]: unknown };
+  if (!(w[REGISTRY_KEY] instanceof Set)) {
+    w[REGISTRY_KEY] = new Set<HTMLAudioElement>();
+  }
+  return w[REGISTRY_KEY] as TrackRegistry;
 }
-const PROGRESSION: Chord[] = [
-  { root: -12, tones: [0, 3, 7, 12] },    // Am: A2 bass, A3 C4 E4 A4 tones
-  { root: -16, tones: [-4, 0, 3, 8] },    // F:  F2 bass, F3 A3 C4 F4
-  { root: -21, tones: [3, 7, 10, 15] },   // C:  C2 bass, C4 E4 G4 C5
-  { root: -14, tones: [-2, 2, 5, 10] },   // G:  G2 bass, G3 B3 D4 G4
-];
+
+export function registerSoundtrack(el: HTMLAudioElement) {
+  getRegistry()?.add(el);
+}
+
+export function unregisterSoundtrack(el: HTMLAudioElement) {
+  getRegistry()?.delete(el);
+}
+
+export function pauseOtherSoundtracks(except: HTMLAudioElement | null) {
+  const reg = getRegistry();
+  if (!reg) return;
+  for (const el of Array.from(reg)) {
+    if (el === except) continue;
+    try {
+      el.pause();
+    } catch {}
+    try {
+      el.currentTime = 0;
+    } catch {}
+    el.volume = 0;
+  }
+}
 
 class Music {
+  private audioEl: HTMLAudioElement | null = null;
   private started = false;
-  private nodes: GainNode[] = [];
-  private step = 0;
-  private nextStepAt = 0;
-  private bpm = 114;
-  private padBase = 110; // A2
-  private currentChordForPad = -1;
+  private fadeRaf: number | null = null;
+  private pauseTimer: number | null = null;
 
-  private createLayer(): GainNode | null {
-    const ctx = ensureAudio();
-    if (!ctx || !musicBus) return null;
-    const g = ctx.createGain();
-    g.gain.value = 0;
-    g.connect(musicBus);
-    this.nodes.push(g);
-    return g;
+  private initElement(): HTMLAudioElement | null {
+    if (typeof window === "undefined") return null;
+    if (this.audioEl) return this.audioEl;
+    // Re-use an element left behind by a previous HMR load if one exists —
+    // creating a second `new Audio()` while the old one is still playing is
+    // exactly what produced the "two soundtracks at once" bug.
+    const w = window as unknown as {
+      __ariseGameMusicEl?: HTMLAudioElement;
+    };
+    let el = w.__ariseGameMusicEl;
+    if (el) {
+      try {
+        el.pause();
+      } catch {}
+      try {
+        el.currentTime = 0;
+      } catch {}
+    } else {
+      el = new Audio(MUSIC_URL);
+      el.loop = true;
+      el.preload = "auto";
+      w.__ariseGameMusicEl = el;
+    }
+    el.volume = 0;
+    this.audioEl = el;
+    registerSoundtrack(el);
+    return el;
+  }
+
+  private cancelFade() {
+    if (this.fadeRaf !== null) {
+      cancelAnimationFrame(this.fadeRaf);
+      this.fadeRaf = null;
+    }
+    if (this.pauseTimer !== null) {
+      clearTimeout(this.pauseTimer);
+      this.pauseTimer = null;
+    }
+  }
+
+  private fadeVolume(target: number, durationMs: number, after?: () => void) {
+    this.cancelFade();
+    const el = this.audioEl;
+    if (!el) {
+      after?.();
+      return;
+    }
+    const start = el.volume;
+    const t0 = performance.now();
+    const step = () => {
+      const now = performance.now();
+      const k = Math.min(1, (now - t0) / durationMs);
+      el.volume = start + (target - start) * k;
+      if (k < 1) {
+        this.fadeRaf = requestAnimationFrame(step);
+      } else {
+        this.fadeRaf = null;
+        after?.();
+      }
+    };
+    this.fadeRaf = requestAnimationFrame(step);
   }
 
   start() {
-    if (this.started) return;
-    const ctx = ensureAudio();
-    if (!ctx || !musicBus) return;
-    this.started = true;
-    // Buses: 0 drums, 1 bass, 2 arp, 3 pad
-    for (let i = 0; i < 4; i++) this.createLayer();
-    this.step = 0;
-    this.currentChordForPad = -1;
-    this.nextStepAt = ctx.currentTime + 0.08;
-  }
-
-  setLayers(level: number) {
-    const ctx = ctxOrNull();
-    if (!ctx) return;
-    const vols = [0, 0, 0, 0];
-    if (level >= 1) vols[0] = 0.55; // drums
-    if (level >= 2) vols[1] = 0.42; // bass
-    if (level >= 3) vols[2] = 0.28; // arp
-    if (level >= 4) vols[3] = 0.22; // pad
-    for (let i = 0; i < this.nodes.length; i++) {
-      const n = this.nodes[i];
-      if (!n) continue;
-      n.gain.setTargetAtTime(vols[i], ctx.currentTime, 0.5);
+    const el = this.initElement();
+    if (!el) return;
+    // Defensive: silence every other registered soundtrack element before we
+    // start — covers navigation-from-homepage cases, and HMR orphans.
+    pauseOtherSoundtracks(el);
+    // First start per mount: rewind to zero, play, fade in to MUSIC_VOLUME.
+    // Subsequent calls (new run after death) are no-ops so the loop keeps
+    // playing uninterrupted.
+    if (!this.started) {
+      this.cancelFade();
+      try {
+        el.currentTime = 0;
+      } catch {
+        // Safari may throw if the element isn't ready yet; harmless.
+      }
+      el.volume = 0;
+      el.play().catch(() => {
+        // Autoplay blocked (no user gesture yet) — fade-in target will apply
+        // once a gesture-triggered call reaches us.
+      });
+      this.fadeVolume(muted ? 0 : MUSIC_VOLUME, 500);
+      this.started = true;
     }
   }
 
-  setKey(accentHz: number) {
-    // Anchor the progression to a tonal center; zones can nudge it up a semi or two.
-    this.padBase = accentHz;
+  // Preserved for API compatibility — the MP3 plays at a fixed volume, so
+  // score-based layering no longer applies.
+  setLayers(_level: number) {
+    void _level;
   }
 
-  tick() {
-    if (!this.started) return;
-    const ctx = ctxOrNull();
-    if (!ctx) return;
-    const stepDur = 60 / this.bpm / 4; // 16th notes
-    if (this.nextStepAt < ctx.currentTime - 0.5) {
-      this.nextStepAt = ctx.currentTime + 0.05;
-      this.step = 0;
-      this.currentChordForPad = -1;
-    }
-    while (this.nextStepAt < ctx.currentTime + 0.2) {
-      this.scheduleStep(this.nextStepAt, this.step);
-      this.step = (this.step + 1) % 32;
-      this.nextStepAt += stepDur;
-    }
+  setKey(_accentHz: number) {
+    void _accentHz;
+  }
+
+  tick() {}
+
+  // Called by setMuted() so master mute still silences music without routing
+  // through the Web Audio graph.
+  applyMute(isMutedNow: boolean) {
+    const el = this.audioEl;
+    if (!el || !this.started) return;
+    this.fadeVolume(isMutedNow ? 0 : MUSIC_VOLUME, 120);
   }
 
   stop() {
-    this.setLayers(0);
-  }
-
-  private scheduleStep(t: number, step: number) {
-    const ctx = ctxOrNull();
-    if (!ctx) return;
-    const [drumG, bassG, arpG, padG] = this.nodes;
-
-    const chordIdx = Math.floor(step / 8);
-    const chord = PROGRESSION[chordIdx];
-    const stepInChord = step % 8;
-
-    // ---- DRUMS: 4-on-the-floor kick, backbeat snare+clap, 16th hats ----
-    if (drumG) {
-      // Kick on every beat (every 4 16ths)
-      if (step % 4 === 0) this.kick(t, drumG);
-      // Plus ghost kick just before the last beat for groove
-      if (step === 30) this.kick(t, drumG, 0.55);
-
-      // Snare + clap on 2 and 4 of each bar
-      if (step === 4 || step === 12 || step === 20 || step === 28) {
-        this.snare(t, drumG);
-        this.clap(t, drumG);
-      }
-
-      // Closed hat every 16th with dynamic accents
-      const hatVol =
-        step % 4 === 0 ? 0.035 : step % 2 === 0 ? 0.022 : 0.04; // accent the "and"s
-      this.hat(t, drumG, hatVol);
-
-      // Open hat on every "and of 4" (classic synthwave)
-      if (step === 14 || step === 30) this.openHat(t, drumG);
-    }
-
-    // ---- BASS: rhythmic root pulse per chord ----
-    if (bassG) {
-      // 8-step pattern within each chord: root pumps on beat, octave accent on 7
-      // Beats:      1   .   .   .   2   .   .   .
-      // 16ths: 0   1   2   3   4   5   6   7
-      const pattern: Array<number | null> = [
-        0,    null, null, null, 0,    null, 12,   null,
-      ];
-      const off = pattern[stepInChord];
-      if (off != null) {
-        const hz = SEMI(this.padBase, chord.root + off);
-        this.bass(t, bassG, hz);
-      }
-    }
-
-    // ---- ARP: detuned saw duet climbing/descending chord tones ----
-    if (arpG) {
-      // Play on every 8th-note (even steps)
-      if (step % 2 === 0) {
-        // 16-note up-down-up pattern indexing chord.tones [0..3]
-        const idx = step / 2;
-        const upDown = [0, 1, 2, 3, 2, 1, 0, 1, 2, 1, 2, 3, 2, 3, 2, 1];
-        const toneIdx = upDown[idx % 16];
-        const semi = chord.tones[toneIdx] + 12; // up an octave from pad voicing
-        this.arp(t, arpG, SEMI(this.padBase, semi));
-      }
-    }
-
-    // ---- PAD: sustained chord re-triggered at each chord change ----
-    if (padG && chordIdx !== this.currentChordForPad && stepInChord === 0) {
-      this.currentChordForPad = chordIdx;
-      for (const semi of chord.tones) {
-        this.pad(t, padG, SEMI(this.padBase, semi));
-      }
-    }
-  }
-
-  // ============================================================
-  // VOICES
-  // ============================================================
-  private kick(t: number, bus: GainNode, vel = 1) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    // Body: 95 → 42 Hz sine thump
-    const o = ctx.createOscillator();
-    o.type = "sine";
-    o.frequency.setValueAtTime(95, t);
-    o.frequency.exponentialRampToValueAtTime(42, t + 0.16);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(1.0 * vel, t + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
-    o.connect(g).connect(bus);
-    o.start(t); o.stop(t + 0.26);
-    // Click transient for attack
-    const click = ctx.createOscillator();
-    click.type = "triangle";
-    click.frequency.setValueAtTime(1800, t);
-    click.frequency.exponentialRampToValueAtTime(180, t + 0.02);
-    const cg = ctx.createGain();
-    cg.gain.setValueAtTime(0.0001, t);
-    cg.gain.exponentialRampToValueAtTime(0.35 * vel, t + 0.002);
-    cg.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
-    click.connect(cg).connect(bus);
-    click.start(t); click.stop(t + 0.04);
-  }
-
-  private snare(t: number, bus: GainNode) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.2), ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    const bp = ctx.createBiquadFilter();
-    bp.type = "bandpass";
-    bp.frequency.value = 2400;
-    bp.Q.value = 0.8;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.5, t + 0.003);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
-    src.connect(bp).connect(g).connect(bus);
-    src.start(t);
-    // Tonal layer adds body
-    const o = ctx.createOscillator();
-    o.type = "triangle";
-    o.frequency.setValueAtTime(240, t);
-    o.frequency.exponentialRampToValueAtTime(110, t + 0.08);
-    const og = ctx.createGain();
-    og.gain.setValueAtTime(0.0001, t);
-    og.gain.exponentialRampToValueAtTime(0.18, t + 0.004);
-    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
-    o.connect(og).connect(bus);
-    o.start(t); o.stop(t + 0.14);
-  }
-
-  private clap(t: number, bus: GainNode) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    // Three filtered noise bursts, slightly spaced — that handclap spread.
-    for (let i = 0; i < 3; i++) {
-      const bt = t + i * 0.012;
-      const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.05), ctx.sampleRate);
-      const d = buf.getChannelData(0);
-      for (let j = 0; j < d.length; j++) d[j] = (Math.random() * 2 - 1) * (1 - j / d.length);
-      const src = ctx.createBufferSource();
-      src.buffer = buf;
-      const bp = ctx.createBiquadFilter();
-      bp.type = "bandpass";
-      bp.frequency.value = 1600;
-      bp.Q.value = 1.2;
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.0001, bt);
-      g.gain.exponentialRampToValueAtTime(0.22, bt + 0.003);
-      g.gain.exponentialRampToValueAtTime(0.0001, bt + 0.06);
-      src.connect(bp).connect(g).connect(bus);
-      src.start(bt);
-    }
-  }
-
-  private hat(t: number, bus: GainNode, vol: number) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.04), ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    const hp = ctx.createBiquadFilter();
-    hp.type = "highpass";
-    hp.frequency.value = 8200;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol, t + 0.001);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
-    src.connect(hp).connect(g).connect(bus);
-    src.start(t);
-  }
-
-  private openHat(t: number, bus: GainNode) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.22), ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    const hp = ctx.createBiquadFilter();
-    hp.type = "highpass";
-    hp.frequency.value = 6500;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.06, t + 0.002);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
-    src.connect(hp).connect(g).connect(bus);
-    src.start(t);
-  }
-
-  private bass(t: number, bus: GainNode, hz: number) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    // Two saws detuned slightly for thickness, into a lowpass envelope.
-    const mkOsc = (detune: number) => {
-      const o = ctx.createOscillator();
-      o.type = "sawtooth";
-      o.frequency.setValueAtTime(hz, t);
-      o.detune.value = detune;
-      return o;
-    };
-    const o1 = mkOsc(-8);
-    const o2 = mkOsc(8);
-    // Sub sine for weight
-    const sub = ctx.createOscillator();
-    sub.type = "sine";
-    sub.frequency.setValueAtTime(hz / 2, t);
-
-    const lp = ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.Q.value = 6;
-    lp.frequency.setValueAtTime(900, t);
-    lp.frequency.exponentialRampToValueAtTime(180, t + 0.28);
-
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.7, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.34);
-
-    const subG = ctx.createGain();
-    subG.gain.setValueAtTime(0.0001, t);
-    subG.gain.exponentialRampToValueAtTime(0.4, t + 0.01);
-    subG.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
-
-    o1.connect(lp); o2.connect(lp);
-    lp.connect(g).connect(bus);
-    sub.connect(subG).connect(bus);
-    o1.start(t); o2.start(t); sub.start(t);
-    o1.stop(t + 0.36); o2.stop(t + 0.36); sub.stop(t + 0.32);
-  }
-
-  private arp(t: number, bus: GainNode, hz: number) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    // Detuned saw pair — supersaw-lite — with a short resonant sweep.
-    const mkOsc = (detune: number) => {
-      const o = ctx.createOscillator();
-      o.type = "sawtooth";
-      o.frequency.setValueAtTime(hz, t);
-      o.detune.value = detune;
-      return o;
-    };
-    const o1 = mkOsc(-12);
-    const o2 = mkOsc(12);
-    const lp = ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.Q.value = 3;
-    lp.frequency.setValueAtTime(3600, t);
-    lp.frequency.exponentialRampToValueAtTime(900, t + 0.24);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.22, t + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
-    o1.connect(lp); o2.connect(lp);
-    lp.connect(g).connect(bus);
-    o1.start(t); o2.start(t);
-    o1.stop(t + 0.28); o2.stop(t + 0.28);
-
-    // Delay-like repeat, half volume, 3/16th later
-    const rt = t + (60 / this.bpm / 4) * 3;
-    const d1 = mkOsc(-12);
-    const d2 = mkOsc(12);
-    d1.frequency.setValueAtTime(hz, rt);
-    d2.frequency.setValueAtTime(hz, rt);
-    const dlp = ctx.createBiquadFilter();
-    dlp.type = "lowpass";
-    dlp.frequency.value = 1600;
-    const dg = ctx.createGain();
-    dg.gain.setValueAtTime(0.0001, rt);
-    dg.gain.exponentialRampToValueAtTime(0.09, rt + 0.006);
-    dg.gain.exponentialRampToValueAtTime(0.0001, rt + 0.22);
-    d1.connect(dlp); d2.connect(dlp);
-    dlp.connect(dg).connect(bus);
-    d1.start(rt); d2.start(rt);
-    d1.stop(rt + 0.24); d2.stop(rt + 0.24);
-  }
-
-  private pad(t: number, bus: GainNode, hz: number) {
-    const ctx = ctxOrNull(); if (!ctx) return;
-    // Two slightly detuned squares + sine for body; long bell-curve envelope
-    // so the chord swells and breathes over the 8 steps of each chord slot.
-    const dur = (60 / this.bpm / 4) * 8; // 8 16ths = 1 chord slot
-    const mk = (type: OscillatorType, detune: number, mul: number) => {
-      const o = ctx.createOscillator();
-      o.type = type;
-      o.frequency.setValueAtTime(hz * mul, t);
-      o.detune.value = detune;
-      return o;
-    };
-    const o1 = mk("square", -10, 1);
-    const o2 = mk("square", 10, 1);
-    const o3 = mk("sine", 0, 1);
-    const lp = ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.frequency.value = 1600;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.18, t + dur * 0.35);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 1.05);
-    o1.connect(lp); o2.connect(lp); o3.connect(lp);
-    lp.connect(g).connect(bus);
-    o1.start(t); o2.start(t); o3.start(t);
-    o1.stop(t + dur * 1.1); o2.stop(t + dur * 1.1); o3.stop(t + dur * 1.1);
+    const el = this.audioEl;
+    this.started = false;
+    if (!el) return;
+    // Fade out, then pause at the end. Short enough that there's no real
+    // overlap if the user navigates fast, long enough to avoid an abrupt cut.
+    this.fadeVolume(0, 150, () => {
+      el.pause();
+      try {
+        el.currentTime = 0;
+      } catch {}
+    });
   }
 }
 

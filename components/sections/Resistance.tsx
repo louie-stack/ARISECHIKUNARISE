@@ -73,7 +73,7 @@ export default function Resistance() {
         </h2>
 
         <p className="prose-normal mt-6 text-lg md:text-xl max-w-3xl mx-auto text-bone/80">
-          Pockets of resistance across LitVM City. Some you know. Some you&apos;ll meet.
+          Key community figures that inspired our movement.
         </p>
       </div>
 

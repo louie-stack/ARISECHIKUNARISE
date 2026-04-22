@@ -44,6 +44,7 @@ import {
   setMuted as setAudioMuted,
   sfxFlap,
   sfxCoin,
+  sfxComboChing,
   sfxTowerPass,
   sfxDeath,
   sfxPowerup,
@@ -274,6 +275,7 @@ export default function ArisGame() {
   const [showStats, setShowStats] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const [paused, setPaused] = useState(false);
   const [newAchievements, setNewAchievements] = useState<string[]>([]);
   const [shareToast, setShareToast] = useState("");
@@ -331,6 +333,11 @@ export default function ArisGame() {
     cloudsRef.current = seedClouds();
     // Seed scrolling headlines
     headlinesRef.current = seedHeadlines();
+    // Stop the music when the player leaves the page. Starts on first flap
+    // (a user gesture that unlocks audio) and continues across deaths.
+    return () => {
+      music.stop();
+    };
   }, []);
 
   // Detect portrait orientation on small screens — the game is 16:9 and
@@ -483,7 +490,6 @@ export default function ArisGame() {
       VIGNETTES[Math.floor(Math.random() * VIGNETTES.length)];
     ensureAudio();
     music.start();
-    music.setLayers(1);
     sfxFlap();
     haptic(12);
     stateRef.current = "playing";
@@ -580,7 +586,6 @@ export default function ArisGame() {
     comboRef.current = 0;
     currentTauntRef.current =
       VILLAIN_TAUNTS[Math.floor(Math.random() * VILLAIN_TAUNTS.length)];
-    music.stop();
     sfxDeath();
     haptic([0, 60, 40, 80]);
     setUiState("gameover");
@@ -632,10 +637,10 @@ export default function ArisGame() {
   const handlePointer = useCallback(
     (e: React.PointerEvent<HTMLCanvasElement>) => {
       e.preventDefault();
-      if (showShop || showStats || showAchievements || showSettings) return;
+      if (showShop || showStats || showAchievements || showSettings || showShare) return;
       flap();
     },
-    [flap, showShop, showStats, showAchievements, showSettings]
+    [flap, showShop, showStats, showAchievements, showSettings, showShare]
   );
 
   // Keep RAF's callable versions of update/render current across React re-renders.
@@ -761,13 +766,9 @@ export default function ArisGame() {
     // Palette blending based on towers passed
     paletteRef.current = getBlendedPalette(towersPassedRef.current);
 
-    // Music layer scaling based on tower count
-    if (state === "playing") {
-      const score = scoreRef.current;
-      const level = score >= 40 ? 4 : score >= 20 ? 3 : score >= 8 ? 2 : 1;
-      music.setLayers(level);
-      music.tick();
-    }
+    // Music runs at a steady level the whole time the player is on the page —
+    // started on first flap, continues across deaths, silenced only by the mute
+    // toggle. No per-frame scheduling needed for the looped MP3.
 
     // Coin motion + magnet
     const magnetRadiusNow = now < magnetUntilRef.current
@@ -845,6 +846,10 @@ export default function ArisGame() {
         scoreRef.current += CFG.coin.value;
         noCoinsThisRunRef.current = false;
         sfxCoin(comboRef.current);
+        // Streak milestone — ch-ching every 10 coins without break.
+        if (comboRef.current > 0 && comboRef.current % 10 === 0) {
+          sfxComboChing();
+        }
         haptic(8);
         for (let i = 0; i < CFG.juice.sparksOnCoin; i++) {
           sparksRef.current.push(spawnSpark(coin.x, coin.y, 3.2, COLORS.gold));
@@ -2173,6 +2178,21 @@ export default function ArisGame() {
     setShowNamePrompt(false);
   }, [nameInput, lastScore, lastCoins, lastTowers, save]);
 
+  // Opens X's tweet intent in a new tab, prefilled with the player's score
+  // and a link back to the game. The site URL comes from window.location so
+  // it works on localhost, preview, and production without config.
+  const openXIntent = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const gameUrl = `${window.location.origin}/arise`;
+    const text = `I flew ${lastScore} in ARISE CHIKUN 🐔 ${lastCoins} coins, ${lastTowers} towers. Can you beat my score?`;
+    const intent =
+      "https://x.com/intent/tweet" +
+      `?text=${encodeURIComponent(text)}` +
+      `&url=${encodeURIComponent(gameUrl)}` +
+      `&hashtags=${encodeURIComponent("CHIKUN,ARISE,LITVM")}`;
+    window.open(intent, "_blank", "noopener,noreferrer");
+  }, [lastScore, lastCoins, lastTowers]);
+
   const shareRun = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -2384,7 +2404,7 @@ export default function ArisGame() {
         )}
 
         {/* IDLE / START */}
-        {assetsReady && uiState === "idle" && !showShop && !showStats && !showAchievements && !showSettings && (
+        {assetsReady && uiState === "idle" && !showShop && !showStats && !showAchievements && !showSettings && !showShare && (
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between py-8 px-6 text-center">
             <div className="flex flex-col items-center gap-2 mt-4">
               <div className="inline-block bg-black text-white font-black text-[10px] tracking-[0.35em] px-3 py-1 rounded-full">
@@ -2471,7 +2491,7 @@ export default function ArisGame() {
         )}
 
         {/* GAME OVER */}
-        {assetsReady && uiState === "gameover" && !showShop && !showStats && !showAchievements && !showSettings && (
+        {assetsReady && uiState === "gameover" && !showShop && !showStats && !showAchievements && !showSettings && !showShare && (
           <div
             className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center"
             style={{ background: "rgba(8, 10, 25, 0.78)" }}
@@ -2575,7 +2595,7 @@ export default function ArisGame() {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  shareRun();
+                  setShowShare(true);
                 }}
                 className="px-5 py-3 bg-black text-white font-black tracking-[0.15em] text-sm rounded-full border-2 border-white/20"
               >
@@ -2748,6 +2768,88 @@ export default function ArisGame() {
             <div className="text-[10px] tracking-[0.25em] text-white/60 font-black mt-3 leading-snug">
               CONTROLS · SPACE / CLICK / TAP · P OR ESC TO PAUSE · M TO MUTE
             </div>
+          </Modal>
+        )}
+
+        {/* SHARE MODAL */}
+        {showShare && (
+          <Modal
+            onClose={() => setShowShare(false)}
+            title="SHARE YOUR RUN"
+            accent={palette().accent}
+          >
+            {/* Score readout */}
+            <div className="rounded-xl border-2 border-white/15 bg-white/5 p-4 mb-3">
+              <div className="text-[10px] tracking-[0.3em] text-white/60 font-black">
+                ARISE · CHIKUN
+              </div>
+              <div className="flex items-baseline gap-3 mt-1">
+                <div className="font-black text-white leading-none text-5xl tabular-nums">
+                  {lastScore}
+                </div>
+                <div className="text-[11px] tracking-[0.2em] text-white/70 font-black">
+                  SCORE
+                </div>
+              </div>
+              <div className="text-[11px] tracking-[0.2em] text-white/70 font-black mt-2">
+                {lastCoins} COINS · {lastTowers} TOWERS · ×{lastMaxCombo} BEST COMBO
+              </div>
+            </div>
+
+            {/* Tweet preview */}
+            <div className="rounded-xl border-2 border-white/15 bg-black/50 p-3 mb-4 text-sm leading-snug">
+              <div className="text-white">
+                I flew <span className="font-black">{lastScore}</span> in ARISE
+                CHIKUN 🐔 {lastCoins} coins, {lastTowers} towers. Can you beat my
+                score?
+              </div>
+              <div className="text-[#1d9bf0] mt-2 break-all">
+                {typeof window !== "undefined"
+                  ? `${window.location.origin}/arise`
+                  : "/arise"}
+              </div>
+              <div className="text-white/60 text-xs mt-1">
+                #CHIKUN #ARISE #LITVM
+              </div>
+            </div>
+
+            {/* Actions */}
+            <button
+              type="button"
+              onClick={() => {
+                openXIntent();
+                setShowShare(false);
+              }}
+              className="w-full py-3 bg-black text-white font-black tracking-[0.2em] text-sm rounded-full border-2 border-white hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-2"
+            >
+              {/* X logo */}
+              <svg
+                viewBox="0 0 24 24"
+                className="w-4 h-4"
+                fill="currentColor"
+                aria-hidden
+              >
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              POST TO X
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                shareRun();
+                setShowShare(false);
+              }}
+              className="w-full py-2.5 mt-2 bg-white/10 text-white font-black tracking-[0.2em] text-xs rounded-full border-2 border-white/15 hover:bg-white/15"
+            >
+              DOWNLOAD CARD (PNG)
+            </button>
+
+            {shareToast && (
+              <div className="text-xs text-white/70 font-black tracking-widest mt-3 text-center">
+                {shareToast}
+              </div>
+            )}
           </Modal>
         )}
       </div>

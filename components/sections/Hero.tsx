@@ -16,14 +16,15 @@ export default function Hero() {
       className="relative bg-blue text-bone overflow-hidden min-h-screen flex flex-col"
     >
       <h1 className="sr-only">CHIKUN</h1>
-      {/* Composition area — hero banner with CHIKUN wordmark baked into the artwork */}
+      {/* Plain blue section with the hero banner centred. bg matches the
+          image's blue so the rectangular edges blend into the page. */}
       <div className="relative flex-1 flex items-center justify-center px-2 md:px-4 pt-20 md:pt-24 pb-16 md:pb-20">
         <div className="relative w-full flex items-center justify-center">
           <div
             className="will-change-transform"
             style={{
               transform:
-                "translate3d(0, calc(var(--scroll-progress, 0) * -80px), 0)"
+                "translate3d(0, calc(var(--scroll-progress, 0) * -80px), 0)",
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -31,6 +32,17 @@ export default function Hero() {
               src={HERO_SRC}
               alt="Chikun standing triumphant over fallen henchmen, CHIKUN wordmark behind"
               className="relative z-10 h-[75vh] md:h-[90vh] max-w-full w-auto object-contain animate-float-slow"
+              style={{
+                // Soft edge feather — the mask ellipse is larger than the
+                // image so the CHIKUN wordmark (which reaches near the
+                // horizontal edges) only fades a few percent at the very
+                // extremes, while the top/bottom solid-blue bands (which
+                // contain no subject) dissolve into the page bg.
+                WebkitMaskImage:
+                  "radial-gradient(ellipse 120% 108% at 50% 50%, black 80%, transparent 100%)",
+                maskImage:
+                  "radial-gradient(ellipse 120% 108% at 50% 50%, black 80%, transparent 100%)",
+              }}
             />
           </div>
         </div>

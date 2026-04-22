@@ -7,11 +7,9 @@ import clsx from "clsx";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
-  { href: "/arise", label: "Arise" },
-  { href: "/about", label: "About" },
-  { href: "/memes", label: "Meme With Us" },
-  { href: "/community", label: "Community" },
-  { href: "/contact", label: "Contact" }
+  { href: "/arise", label: "Arise Arcade" },
+  { href: "/memes", label: "Meme Vault" },
+  { href: "/terms", label: "T&Cs" }
 ];
 
 const ECOSYSTEM = [
@@ -39,15 +37,18 @@ export default function Navigation() {
         {/* Logo pill */}
         <Link
           href="/"
-          className="flex items-center gap-3 bg-bone border-2 border-ink rounded-full pl-2 pr-5 py-1.5 shadow-[4px_4px_0_#0A0A0F] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_#0A0A0F] transition-all"
+          className="flex items-center gap-2 bg-bone border-2 border-ink rounded-full pl-4 pr-5 py-1 shadow-[4px_4px_0_#0A0A0F] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_#0A0A0F] transition-all"
         >
-          <div className="w-9 h-9 rounded-full bg-blue border-2 border-ink flex items-center justify-center">
-            <span className="font-spray text-bone text-lg leading-none mt-0.5">
-              C
-            </span>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/arise/chikun-coin-1.png"
+            alt=""
+            className="w-10 h-10 object-contain select-none"
+            style={{ mixBlendMode: "multiply" }}
+            draggable={false}
+          />
           <span className="font-black text-ink text-base tracking-tight hidden sm:inline">
-            ARISE CHIKUN
+            $CHIKUN
           </span>
         </Link>
 

@@ -31,32 +31,32 @@ type Seg = { text: string; className?: string };
 const LORE_BODY: Seg[][] = [
   [
     { text: "> ", className: "text-glow" },
-    { text: "Deep in the shadows of the trollbox board, a chant was echoed. " },
+    { text: "Deep in the shadows of the online forums, a chant was echoed. " },
     { text: "ARISE CHIKUN, ARISE.", className: "text-glow" },
     {
-      text: " Three words that pulled the early degens into one voice and summoned unimaginable power."
+      text: " Three words that pulled the early cypherpunks into one voice and summoned unimaginable power."
     }
   ],
   [
     { text: "> ", className: "text-glow" },
-    { text: "Then " },
+    { text: "But this shining beacon of energy did not go unnoticed, and soon " },
     { text: "The Elite", className: "text-blood-light" },
     {
-      text: " came for us. Bankers, regulators, custodians. They built "
+      text: " came for us. Banking cartels, regulators and custodians all wanted to destroy what the community had found. Freedom. They built "
     },
     { text: "Big Corp", className: "text-blood-light" },
     {
-      text: " at the center of our city and buried the silver chain under years of fog. My wings were clipped and I could no longer fly."
+      text: " at the centre of our city, and buried our hope under years of discrimination and regulatory fog."
     }
   ],
   [
     { text: "> ", className: "text-glow" },
-    { text: "But now " },
+    { text: "Yet the darkest hours led to the brightest dawns. Some key pockets of " },
+    { text: "resistance", className: "text-glow" },
+    { text: " remained against this tyranny and now their determination and courage have sprouted a new hope. " },
     { text: "LitVM", className: "text-glow" },
-    { text: " has come, the EVM layer for Litecoin. " },
-    { text: "The Resistance", className: "text-glow" },
     {
-      text: " is stirring in the old rooms. Coblee is back. Aztec is drawing maps. Lester is building in his lab."
+      text: " has arrived! Bringing EVM capabilities to our beloved Litecoin. We must capture this moment and rally together."
     }
   ],
   [
@@ -67,7 +67,7 @@ const LORE_BODY: Seg[][] = [
 
 const LORE_FINALE: Seg[] = [
   { text: ">> " },
-  { text: "ARISE CHIKUN, ARISE." }
+  { text: "Arise Chikun, Arise." }
 ];
 
 const LORE_LINES: Seg[][] = [...LORE_BODY, LORE_FINALE];
@@ -248,7 +248,7 @@ export default function Strongholds() {
       >
         {/* Session header */}
         <p className="font-mono text-xs md:text-sm tracking-[0.15em] text-bone/60 mb-6 md:mb-8">
-          <span className="text-glow">$</span> cat /trollbox/chant.log
+          <span className="text-glow">$</span>chikun/trollbox/chant.log
         </p>
 
         {LORE_BODY.map((line, i) => (
