@@ -3,7 +3,7 @@
  */
 
 const KEY = "arise-save-v2";
-export const LEADERBOARD_SIZE = 10;
+export const LEADERBOARD_SIZE = 20;
 export const LEADERBOARD_EVENT = "arise-leaderboard-update";
 
 export interface LeaderboardEntry {

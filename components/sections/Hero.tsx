@@ -27,23 +27,37 @@ export default function Hero() {
                 "translate3d(0, calc(var(--scroll-progress, 0) * -80px), 0)",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={HERO_SRC}
-              alt="Chikun standing triumphant over fallen henchmen, CHIKUN wordmark behind"
-              className="relative z-10 h-[75vh] md:h-[90vh] max-w-full w-auto object-contain animate-float-slow"
-              style={{
-                // Soft edge feather — the mask ellipse is larger than the
-                // image so the CHIKUN wordmark (which reaches near the
-                // horizontal edges) only fades a few percent at the very
-                // extremes, while the top/bottom solid-blue bands (which
-                // contain no subject) dissolve into the page bg.
-                WebkitMaskImage:
-                  "radial-gradient(ellipse 120% 108% at 50% 50%, black 80%, transparent 100%)",
-                maskImage:
-                  "radial-gradient(ellipse 120% 108% at 50% 50%, black 80%, transparent 100%)",
-              }}
-            />
+            <div className="relative animate-float-slow">
+              {/* Sharp image — the corners of the rectangle are masked out
+                  entirely (the ellipse boundary cuts them off) and the
+                  edges fade softly into transparency. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={HERO_SRC}
+                alt="Chikun standing triumphant over fallen henchmen, CHIKUN wordmark behind"
+                className="relative z-10 h-[75vh] md:h-[90vh] max-w-full w-auto object-contain"
+                style={{
+                  WebkitMaskImage:
+                    "radial-gradient(ellipse 160% 100% at 50% 50%, black 78%, transparent 100%)",
+                  maskImage:
+                    "radial-gradient(ellipse 160% 100% at 50% 50%, black 78%, transparent 100%)",
+                }}
+              />
+
+              {/* Bg-blue vignette — sized to reach the farthest corner of
+                  the image rectangle, so the actual corners get painted in
+                  the exact page colour (#2B5FAD, matches `bg-blue`). Stays
+                  fully transparent through the centre so the subject and
+                  wordmark remain untouched. */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-20"
+                style={{
+                  background:
+                    "radial-gradient(ellipse farthest-corner at center, transparent 68%, #2B5FAD 98%)",
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

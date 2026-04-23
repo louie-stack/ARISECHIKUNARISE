@@ -5,10 +5,17 @@ import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 
-const NAV_ITEMS = [
+type NavItem = {
+  href: string;
+  label: string;
+  comingSoon?: boolean;
+};
+
+const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home" },
-  { href: "/arise", label: "Arise Arcade" },
+  { href: "/arise", label: "Arcade" },
   { href: "/memes", label: "Meme Vault" },
+  { href: "/merch", label: "Merch Store", comingSoon: true },
   { href: "/terms", label: "T&Cs" }
 ];
 
@@ -102,13 +109,28 @@ export default function Navigation() {
           <ul className="space-y-4 max-w-4xl">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="block font-black text-bone text-5xl md:text-7xl tracking-tight hover:text-glow transition-colors"
-                >
-                  {item.label.toUpperCase()} →
-                </Link>
+                {item.comingSoon ? (
+                  <div
+                    aria-disabled="true"
+                    className="flex items-center gap-4 flex-wrap font-black text-bone/40 text-5xl md:text-7xl tracking-tight cursor-not-allowed select-none"
+                  >
+                    <span>{item.label.toUpperCase()}</span>
+                    <span
+                      className="tape tape-mint"
+                      style={{ fontSize: "0.75rem", padding: "0.35rem 0.85rem" }}
+                    >
+                      COMING SOON
+                    </span>
+                  </div>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="block font-black text-bone text-5xl md:text-7xl tracking-tight hover:text-glow transition-colors"
+                  >
+                    {item.label.toUpperCase()} →
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

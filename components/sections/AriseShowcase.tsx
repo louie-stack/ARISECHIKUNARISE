@@ -125,7 +125,7 @@ export default function AriseShowcase() {
             className="tape"
             style={{ fontSize: "1.05rem", padding: "0.65rem 1.4rem" }}
           >
-            NOW PLAYING
+            ARCADE
           </span>
         </div>
 
@@ -133,11 +133,11 @@ export default function AriseShowcase() {
           className="font-black leading-[0.9] tracking-tight"
           style={{ fontSize: "clamp(2.75rem, 8vw, 7rem)" }}
         >
-          ARISE ARCADE
+          CHIKUN&apos;S ESCAPE
         </h2>
 
         <p className="prose-normal mt-6 text-base md:text-lg max-w-4xl mx-auto text-bone/80 md:whitespace-nowrap">
-          Tap to flap. Dodge Big Corp. Rise through four chapters.
+          A strange game. The only winning move is not to play.
         </p>
       </div>
 
@@ -148,36 +148,32 @@ export default function AriseShowcase() {
         className="reveal-stagger relative mt-16 md:mt-20 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6"
       >
         {/* ─────── Tile 1 — Headline + CTA (spans 2 cols on desktop) ─────── */}
-        <div className="md:col-span-2 relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-blue/25 via-ink to-ink p-8 md:p-10 overflow-hidden group">
+        <div className="arise-tile md:col-span-2 relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-blue/25 via-ink to-ink p-8 md:p-10 overflow-hidden group">
           <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-glow/10 blur-3xl pointer-events-none" />
           <span className="font-black text-glow text-xs tracking-[0.35em]">
             MINIGAME · ARISE
           </span>
           <h3
-            className="mt-4 font-black leading-[0.85] tracking-tight"
-            style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.75rem)" }}
+            className="mt-4 font-bold leading-[0.9] tracking-tight"
+            style={{ fontSize: "clamp(1.25rem, 3vw, 2.25rem)" }}
           >
             FREE CHIKUN FROM
             <br />
-            THE <span className="text-[#ff3037]">GLOBAL ELITES</span>.
+            <span className="text-[#ff3037]">THE ELITES</span>
           </h3>
           <p className="prose-normal mt-5 text-base md:text-lg text-bone/75 max-w-md">
-            Flap past Big Corp&apos;s towers, climb four zones, and top the
-            global leaderboard.
+            Fly the city. Outrun The Elite. Write your name in silver.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link href="/arise" className="btn-pill btn-pill-glow">
               PLAY NOW →
             </Link>
-            <span className="font-black text-bone/40 text-xs tracking-[0.3em]">
-              FREE · IN-BROWSER · MOBILE-READY
-            </span>
           </div>
         </div>
 
         {/* ─────── Tile 2 — Hero gameplay video ─────── */}
         <div
-          className="relative rounded-2xl border-2 border-bone/15 overflow-hidden aspect-square md:aspect-auto min-h-[280px] bg-ink"
+          className="arise-tile relative rounded-2xl border-2 border-bone/15 overflow-hidden aspect-square md:aspect-auto min-h-[280px] bg-ink"
         >
           <video
             autoPlay
@@ -219,7 +215,7 @@ export default function AriseShowcase() {
         </div>
 
         {/* ─────── Tile 3 — Bosses (Big Corp) ─────── */}
-        <div className="relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-blood/30 via-ink to-ink p-6 overflow-hidden min-h-[320px] flex flex-col">
+        <div className="arise-tile relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-blood/30 via-ink to-ink p-6 overflow-hidden min-h-[320px] flex flex-col">
           <span className="tape tape-blood self-start" style={{ fontSize: "0.65rem" }}>
             FACE BIG CORP
           </span>
@@ -235,7 +231,7 @@ export default function AriseShowcase() {
             />
           </div>
           <div>
-            <p className="font-black tracking-tight text-xl">BOSSES</p>
+            <p className="font-bold tracking-tight text-lg leading-none mt-2">BOSSES</p>
             <p className="prose-normal text-sm text-bone/70 mt-1">
               Tower regiments patrol every chapter. Slip past, or get swatted.
             </p>
@@ -243,7 +239,7 @@ export default function AriseShowcase() {
         </div>
 
         {/* ─────── Tile 5 — Arsenal / Powerups ─────── */}
-        <div className="relative rounded-2xl border-2 border-bone/15 bg-ink-soft/30 p-6 min-h-[320px] flex flex-col overflow-hidden">
+        <div className="arise-tile relative rounded-2xl border-2 border-bone/15 bg-ink-soft/30 p-6 min-h-[320px] flex flex-col overflow-hidden">
           {/* Ambient glow accent */}
           <div
             aria-hidden
@@ -252,7 +248,7 @@ export default function AriseShowcase() {
 
           <div className="flex items-center justify-between mb-3">
             <span className="tape" style={{ fontSize: "0.65rem" }}>
-              ARSENAL
+              BOOST
             </span>
             <span className="font-black text-[0.6rem] tracking-[0.3em] text-bone/40">
               ×3 DROPS
@@ -265,7 +261,7 @@ export default function AriseShowcase() {
               return (
                 <li
                   key={p.label}
-                  className="group relative flex items-center gap-2.5 rounded-lg border border-bone/10 bg-ink/60 py-2 pl-3 pr-3 overflow-hidden transition-colors hover:border-bone/30"
+                  className="group relative flex items-center gap-2.5 rounded-lg py-2 pl-3 pr-3 overflow-hidden"
                 >
                   {/* Colored left accent bar */}
                   <span
@@ -303,7 +299,7 @@ export default function AriseShowcase() {
           </ul>
 
           <div className="mt-2">
-            <p className="font-black tracking-tight text-xl">THREE TOOLS</p>
+            <p className="font-bold tracking-tight text-lg leading-none mt-2">THREE TOOLS</p>
             <p className="prose-normal text-sm text-bone/70 mt-1">
               Random drops in the flight path. Pick them up to bend the run
               your way.
@@ -312,7 +308,11 @@ export default function AriseShowcase() {
         </div>
 
         {/* ─────── Tile 6 — Leaderboard ─────── */}
-        <div className="relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-glow/10 via-ink to-ink p-6 min-h-[320px] flex flex-col">
+        <Link
+          href="/arise#leaderboard"
+          className="arise-tile relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-glow/10 via-ink to-ink p-6 min-h-[320px] flex flex-col cursor-pointer"
+          aria-label="View the full ARISE leaderboard"
+        >
           <div className="flex items-center justify-between mb-4">
             <span className="tape tape-mint" style={{ fontSize: "0.65rem" }}>
               GLOBAL
@@ -340,16 +340,16 @@ export default function AriseShowcase() {
             ))}
           </ul>
           <div className="mt-2">
-            <p className="font-black tracking-tight text-xl">LEADERBOARD</p>
+            <p className="font-bold tracking-tight text-lg leading-none mt-2">LEADERBOARD</p>
             <p className="prose-normal text-sm text-bone/70 mt-1">
-              Scores post on clear. Your handle, your score, the whole feed
-              watching.
+              Make your mark in the global rankings, every new high score
+              reached updates your entry.
             </p>
           </div>
-        </div>
+        </Link>
 
         {/* ─────── Tile 7 — Soundtrack (spans 3) ─────── */}
-        <div className="md:col-span-3 relative rounded-2xl border-2 border-bone/15 bg-gradient-to-r from-ink via-blue/20 to-ink p-6 md:p-8 overflow-hidden flex flex-col md:flex-row items-center md:items-stretch gap-6">
+        <div className="arise-tile md:col-span-3 relative rounded-2xl border-2 border-bone/15 bg-gradient-to-r from-ink via-blue/20 to-ink p-6 md:p-8 overflow-hidden flex flex-col md:flex-row items-center md:items-stretch gap-6">
           {/* Equalizer */}
           <div
             aria-hidden
@@ -378,8 +378,8 @@ export default function AriseShowcase() {
               SOUNDTRACK
             </span>
             <p
-              className="mt-2 font-black leading-[0.9] tracking-tight"
-              style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)" }}
+              className="mt-2 font-bold leading-[0.95] tracking-tight"
+              style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)" }}
             >
               SYNTHWAVE NIGHTS.
             </p>
@@ -392,7 +392,7 @@ export default function AriseShowcase() {
             <button
               type="button"
               onClick={toggle}
-              className="btn-pill btn-pill-blue inline-flex items-center gap-2"
+              className="btn-pill btn-pill-blue btn-pill-blue-glow inline-flex items-center gap-2"
               aria-pressed={playing}
               aria-label={playing ? "Pause soundtrack" : "Play soundtrack"}
             >

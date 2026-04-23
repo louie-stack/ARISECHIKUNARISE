@@ -3,13 +3,6 @@
 import { useRef } from "react";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
-const SOCIALS = [
-  { label: "Instagram", href: "https://instagram.com" },
-  { label: "X", href: "https://x.com" },
-  { label: "Telegram", href: "https://t.me" },
-  { label: "TikTok", href: "https://tiktok.com" }
-];
-
 export default function Footer() {
   const taglineRef = useRef<HTMLDivElement>(null);
   const taglineState = useRevealOnScroll(taglineRef);
@@ -34,23 +27,6 @@ export default function Footer() {
         <p className="prose-normal mt-8 md:mt-10 text-lg md:text-xl max-w-2xl mx-auto text-bone font-medium">
           Chant it loud enough and they will hear us from every chain.
         </p>
-
-        <p className="mt-16 font-black text-bone text-xs tracking-[0.3em]">
-          FIND THE CHANNELS
-        </p>
-        <div className="reveal-stagger mt-4 flex flex-wrap gap-3 justify-center" data-reveal-state={taglineState}>
-          {SOCIALS.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-pill"
-            >
-              {s.label}
-            </a>
-          ))}
-        </div>
       </div>
 
       {/* Bottom strip */}

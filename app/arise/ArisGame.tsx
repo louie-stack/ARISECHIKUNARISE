@@ -37,6 +37,7 @@ import {
   todaySeed,
   seededRng,
   submitLeaderboardEntry,
+  qualifiesForLeaderboard,
   type SaveState,
 } from "./game/storage";
 import {
@@ -563,13 +564,28 @@ export default function ArisGame() {
     setSaveUi(next);
     setNewAchievements(newlyUnlocked);
 
-    // Leaderboard name prompt — only on a new personal high score.
+    // Leaderboard submission — every run auto-submits with the stored
+    // handle so the board populates naturally. First-time players get a
+    // one-off prompt to pick a handle; once set, future runs submit
+    // silently. Non-qualifying scores are skipped to avoid redundant
+    // save writes (they'd be trimmed off the top-N anyway).
     setSubmittedEntry(false);
-    if (finalScore > cur.highScore) {
-      setNameInput(next.playerName || "");
+    if (!next.playerName && finalScore > 0) {
+      setNameInput("");
       setShowNamePrompt(true);
     } else {
       setShowNamePrompt(false);
+      if (next.playerName && qualifiesForLeaderboard(finalScore)) {
+        const afterSubmit = submitLeaderboardEntry({
+          name: next.playerName,
+          score: finalScore,
+          coins: finalCoins,
+          towers: finalTowers,
+          zone: finalZoneIdx + 1,
+        });
+        setSaveUi(afterSubmit);
+        setSubmittedEntry(true);
+      }
     }
 
     // Death juice
@@ -2547,7 +2563,7 @@ export default function ArisGame() {
             {showNamePrompt && (
               <div className="pointer-events-auto flex flex-col items-center gap-2 mt-1 bg-black/75 border-2 border-[#00d632] rounded-xl px-4 py-3 w-full max-w-xs shadow-[4px_4px_0_0_#000]">
                 <div className="text-[#00d632] font-black text-xs tracking-[0.3em]">
-                  ★ NEW TOP 10 ★
+                  ★ CLAIM YOUR HANDLE ★
                 </div>
                 <input
                   type="text"
