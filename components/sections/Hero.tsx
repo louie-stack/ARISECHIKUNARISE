@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, Music2, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { useRef } from "react";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 
@@ -71,46 +71,26 @@ export default function Hero() {
         </p>
       </div>
 
-      {/* Social icons */}
+      {/* Social icons — only X is live; Telegram is coming soon. */}
       <div className="absolute bottom-4 right-4 md:right-8 flex items-center gap-3 z-20">
         <a
-          href="https://instagram.com"
+          href="https://x.com/ChikunLTC"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Instagram"
-          className="text-bone hover:text-glow transition-colors"
-        >
-          <Instagram size={20} strokeWidth={2.5} />
-        </a>
-        <a
-          href="https://tiktok.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="TikTok"
-          className="text-bone hover:text-glow transition-colors"
-        >
-          <Music2 size={20} strokeWidth={2.5} />
-        </a>
-        <a
-          href="https://x.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="X"
+          aria-label="X (Twitter)"
           className="text-bone hover:text-glow transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
           </svg>
         </a>
-        <a
-          href="https://t.me"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Telegram"
-          className="text-bone hover:text-glow transition-colors"
+        <span
+          aria-label="Telegram — coming soon"
+          title="Telegram — coming soon"
+          className="text-bone/40 cursor-not-allowed"
         >
           <Send size={20} strokeWidth={2.5} />
-        </a>
+        </span>
       </div>
 
       {/* Jagged black comb teeth transitioning to next section */}
