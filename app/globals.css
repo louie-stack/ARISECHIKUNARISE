@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Font CSS variables (--font-sans, --font-spray) are set by next/font in
-   app/layout.tsx — see the className on <html>. Self-hosted so mobile
-   networks can't fall back to OS cursive. */
+/* Fonts — bold chunky sans + spray-paint accent */
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800;900&family=Permanent+Marker&display=swap");
+
+:root {
+  --font-sans: "Hanken Grotesk", system-ui, sans-serif;
+  --font-spray: "Permanent Marker", cursive;
+}
 
 * {
   -webkit-font-smoothing: antialiased;

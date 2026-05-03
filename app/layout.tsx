@@ -1,25 +1,7 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk, Permanent_Marker } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/ui/Navigation";
 import Footer from "@/components/ui/Footer";
-
-// Self-hosted via next/font so the spray-paint headline reliably renders
-// on mobile networks where the previous @import from Google Fonts could
-// stall and fall back to the OS cursive (looks wrong on iOS).
-const hankenGrotesk = Hanken_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "700", "800", "900"],
-  variable: "--font-sans",
-  display: "swap"
-});
-
-const permanentMarker = Permanent_Marker({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-spray",
-  display: "swap"
-});
 
 const DESCRIPTION =
   "The first Litecoin meme returns. Born in the trollboxes of the old world. Now stretching his wings on LitVM.";
@@ -47,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${hankenGrotesk.variable} ${permanentMarker.variable}`}>
+    <html lang="en">
       <head>
         {/* Preload the hero WebP so the homepage paints with the image
             already in cache — eliminates the progressive-paint feel on
