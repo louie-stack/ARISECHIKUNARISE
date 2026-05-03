@@ -14,7 +14,7 @@ export default function Footer() {
         ref={taglineRef}
         data-reveal
         data-reveal-state={taglineState}
-        className="px-4 md:px-8 py-20 md:py-28 text-center max-w-6xl mx-auto"
+        className="px-4 md:px-8 py-16 md:py-28 text-center max-w-6xl mx-auto"
       >
         <h2
           className="font-black text-glow leading-[0.9] tracking-tight animate-neon-pulse"

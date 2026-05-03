@@ -244,7 +244,7 @@ export default function Strongholds() {
       {/* Lore block — terminal-style dispatch, types in on scroll */}
       <div
         ref={loreRef}
-        className="relative px-4 md:px-8 py-20 md:py-28 max-w-5xl mx-auto text-left"
+        className="relative px-4 md:px-8 py-14 md:py-28 max-w-5xl mx-auto text-left"
       >
         {/* Session header */}
         <p className="font-mono text-xs md:text-sm tracking-[0.15em] text-bone/60 mb-6 md:mb-8">

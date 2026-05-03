@@ -77,7 +77,7 @@ export default function NewEra() {
         {/* Stats — wrapped in dashed sticker box */}
         <div
           ref={statsRef}
-          className="mt-20 md:mt-28 sticker-box bg-bone/30 relative"
+          className="mt-12 md:mt-28 sticker-box bg-bone/30 relative"
         >
           {/* Corner tape on the box */}
           <span
@@ -151,7 +151,7 @@ export default function NewEra() {
             animation: chikunCoinBounce 3s ease-in-out infinite;
           }
         `}</style>
-        <div className="mt-24 flex justify-center">
+        <div className="mt-14 md:mt-24 flex justify-center">
           <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96">
             {/* Coin image — tilt/bounce loop. multiply blend hides the white
                 export bg against the bone section. */}
@@ -190,7 +190,7 @@ export default function NewEra() {
         </div>
 
         {/* Creative universe CTA */}
-        <div className="mt-24">
+        <div className="mt-16 md:mt-24">
           <h3
             className="font-black leading-[0.9] tracking-tight"
             style={{ fontSize: "clamp(1.75rem, 4.5vw, 4rem)" }}
