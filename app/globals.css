@@ -432,8 +432,11 @@ body {
 
 /* Mobile landscape: hide the nav + footer so the game truly fills the
    screen. The .is-arise-page body class is set by ArisGame.tsx on mount.
-   We use a body class (not :has) for universal mobile-browser support. */
-@media (max-height: 500px) and (orientation: landscape) {
+   We use a body class (not :has) for universal mobile-browser support.
+   Threshold widened to 600px height to catch larger Android phones; the
+   --arise-vh-px var is set in JS to side-step iOS Safari's lazy `dvh`
+   updates on orientation change. */
+@media (max-height: 600px) and (orientation: landscape) {
   body.is-arise-page > header,
   body.is-arise-page > footer {
     display: none !important;
@@ -442,10 +445,15 @@ body {
     padding: 0 !important;
     padding-top: 0 !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
-    min-height: 100dvh;
+    min-height: var(--arise-vh-px, 100dvh);
+  }
+  /* Hide the leaderboard in fullscreen mode — game-only experience.
+     User can rotate to portrait to see scores. */
+  body.is-arise-page #leaderboard {
+    display: none !important;
   }
   body.is-arise-page .ariseFrame {
-    --arise-vh: 100dvh;
+    --arise-vh: var(--arise-vh-px, 100dvh);
     border-width: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;

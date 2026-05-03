@@ -301,6 +301,27 @@ export default function ArisGame() {
     };
   }, []);
 
+  // iOS Safari does not always update `100dvh` immediately after an
+  // orientation change — the viewport stays at the pre-rotation size
+  // until the user scrolls. Mirror window.innerHeight into a CSS custom
+  // property so the game frame can snap to the real viewport height the
+  // moment the rotation event fires.
+  useEffect(() => {
+    const setVh = () => {
+      document.documentElement.style.setProperty(
+        "--arise-vh-px",
+        `${window.innerHeight}px`
+      );
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    window.addEventListener("orientationchange", setVh);
+    return () => {
+      window.removeEventListener("resize", setVh);
+      window.removeEventListener("orientationchange", setVh);
+    };
+  }, []);
+
   // ============================================================
   // LIFECYCLE — asset load, save load
   // ============================================================
@@ -678,7 +699,16 @@ export default function ArisGame() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    // Cap DPR on phones — a 3x retina canvas is 4K (3840x2160) of pixels
+    // for the same logical 1280x720, and mobile GPUs choke on it. Keep
+    // desktop crisp at native DPR; throttle mobile to 1.5 max which is
+    // the inflection point where text/sprites still look sharp but the
+    // pixel count drops by 75% vs native 3x.
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const rawDpr = window.devicePixelRatio || 1;
+    const dpr = isMobile ? Math.min(rawDpr, 1.5) : rawDpr;
     canvas.width = CFG.canvas.w * dpr;
     canvas.height = CFG.canvas.h * dpr;
 
