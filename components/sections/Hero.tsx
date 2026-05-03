@@ -1,7 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 const HERO_WEBP = "/art/hero/chikun-hero.webp";
@@ -14,6 +14,18 @@ export default function Hero() {
   // PNG/WebP paint progressively. The blue section bg already matches the
   // image edges, so an invisible-then-fade-in feels seamless.
   const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // Cache/preload race: if the WebP was already in the browser cache (or
+  // finished downloading via the preload link) before React hydrated, the
+  // onLoad handler never fires. Check `complete` once after mount to cover
+  // that case — otherwise the image stays at opacity-0 forever.
+  useEffect(() => {
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth > 0) {
+      setImgLoaded(true);
+    }
+  }, []);
 
   return (
     <section
@@ -41,6 +53,7 @@ export default function Hero() {
                 <source srcSet={HERO_WEBP} type="image/webp" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
+                  ref={imgRef}
                   src={HERO_PNG}
                   alt="Chikun standing triumphant over fallen henchmen, CHIKUN wordmark behind"
                   width={2400}
