@@ -749,6 +749,14 @@ export default function ArisGame() {
     if (paused) return;
     const state = stateRef.current;
 
+    // Frame-rate-independence factor. Game tuning was authored at 60Hz —
+    // 1.0 frameScale at 60fps means per-frame physics behave exactly as
+    // before (desktop unchanged). At 30fps mobile, frameScale = 2.0 so
+    // each update step covers twice the distance, giving the same speed
+    // per real second. Only applied to per-frame movement; dt-based code
+    // (popup.life, cloud drift, etc) is already correct.
+    const frameScale = dt / (1000 / 60);
+
     // Decay juice state every frame regardless of freeze
     flapScaleTRef.current = Math.max(
       0,
@@ -757,9 +765,9 @@ export default function ArisGame() {
     shakeRef.current *= CFG.juice.shakeDecay;
     if (shakeRef.current < 0.2) shakeRef.current = 0;
 
-    updateFeathers();
-    updateSparks();
-    updatePopups(dt);
+    updateFeathers(frameScale);
+    updateSparks(frameScale);
+    updatePopups(dt, frameScale);
     updateClouds(dt);
     updateHeadlines(dt);
 
@@ -782,7 +790,9 @@ export default function ArisGame() {
       now < slowmoUntilRef.current ? CFG.powerup.slowmoFactor : 1;
     const effDt = dt * slowFactor;
 
-    worldXRef.current += state === "playing" ? scrollSpeedRef.current * slowFactor : 0.8;
+    worldXRef.current +=
+      (state === "playing" ? scrollSpeedRef.current * slowFactor : 0.8) *
+      frameScale;
 
     if (state === "idle") {
       const t = performance.now() / 500;
@@ -794,20 +804,26 @@ export default function ArisGame() {
 
     if (state === "gameover") {
       const c = chikunRef.current;
-      c.vy = Math.min(c.vy + CFG.physics.deathGravity, CFG.physics.maxFall);
-      c.y += c.vy;
+      c.vy = Math.min(
+        c.vy + CFG.physics.deathGravity * frameScale,
+        CFG.physics.maxFall
+      );
+      c.y += c.vy * frameScale;
       return;
     }
 
     const c = chikunRef.current;
-    c.vy = Math.min(c.vy + CFG.physics.gravity * slowFactor, CFG.physics.maxFall);
-    c.y += c.vy * slowFactor;
+    c.vy = Math.min(
+      c.vy + CFG.physics.gravity * slowFactor * frameScale,
+      CFG.physics.maxFall
+    );
+    c.y += c.vy * slowFactor * frameScale;
 
     // Update trail history
     trailRef.current.push({ x: CFG.chikun.x, y: c.y });
     if (trailRef.current.length > CFG.juice.trailLines + 2) trailRef.current.shift();
 
-    const speed = scrollSpeedRef.current * slowFactor;
+    const speed = scrollSpeedRef.current * slowFactor * frameScale;
 
     // Towers
     for (const t of towersRef.current) {
@@ -849,7 +865,7 @@ export default function ArisGame() {
       const distSq = dx * dx + dy * dy;
       if (distSq < magnetRadiusNow * magnetRadiusNow) {
         const dist = Math.sqrt(distSq);
-        const pull = (1 - dist / magnetRadiusNow) * magnetStrengthNow;
+        const pull = (1 - dist / magnetRadiusNow) * magnetStrengthNow * frameScale;
         coin.x += dx * pull;
         coin.y += dy * pull;
       }
@@ -863,9 +879,9 @@ export default function ArisGame() {
     powerUpsRef.current = powerUpsRef.current.filter((p) => p.x > -40 && !p.collected);
 
     // Drones
-    updateDrones(c, effDt);
+    updateDrones(c, effDt, frameScale);
     // Missiles
-    updateMissiles(effDt);
+    updateMissiles(effDt, frameScale);
 
     towersRef.current = towersRef.current.filter(
       (t) => t.x + CFG.tower.width > -20
@@ -1318,16 +1334,20 @@ export default function ArisGame() {
   // ============================================================
   // DRONES / MISSILES
   // ============================================================
-  const updateDrones = (chikun: { y: number }, effDt: number) => {
+  const updateDrones = (
+    chikun: { y: number },
+    effDt: number,
+    frameScale: number
+  ) => {
     for (const d of dronesRef.current) {
       if (d.state === "dead") {
-        d.life -= 0.04;
+        d.life -= 0.04 * frameScale;
         continue;
       }
       // Lock target Y to chikun with a slight lag
-      d.targetY += (chikun.y - d.targetY) * 0.03;
-      d.y += (d.targetY - d.y) * 0.04;
-      d.x += d.vx;
+      d.targetY += (chikun.y - d.targetY) * 0.03 * frameScale;
+      d.y += (d.targetY - d.y) * 0.04 * frameScale;
+      d.x += d.vx * frameScale;
       // Keep within vertical bounds
       d.y = clamp(d.y, 80, CFG.canvas.h - 100);
     }
@@ -1336,43 +1356,47 @@ export default function ArisGame() {
     );
   };
 
-  const updateMissiles = (effDt: number) => {
+  const updateMissiles = (effDt: number, frameScale: number) => {
     for (const m of missilesRef.current) {
-      m.x += m.vx;
-      m.y += m.vy;
+      m.x += m.vx * frameScale;
+      m.y += m.vy * frameScale;
     }
   };
 
   // ============================================================
   // PARTICLES
   // ============================================================
-  const updateFeathers = () => {
+  const updateFeathers = (frameScale: number) => {
+    // Exponential decays use Math.pow so a 30Hz frame still ends up at the
+    // same total decay-per-second as 60Hz. Linear movements just scale.
+    const drag = Math.pow(0.99, frameScale);
     for (const f of feathersRef.current) {
-      f.x += f.vx;
-      f.y += f.vy;
-      f.vy += 0.05;
-      f.vx *= 0.99;
-      f.rot += f.vrot;
-      f.life -= 0.008;
+      f.x += f.vx * frameScale;
+      f.y += f.vy * frameScale;
+      f.vy += 0.05 * frameScale;
+      f.vx *= drag;
+      f.rot += f.vrot * frameScale;
+      f.life -= 0.008 * frameScale;
     }
     feathersRef.current = feathersRef.current.filter((f) => f.life > 0);
   };
 
-  const updateSparks = () => {
+  const updateSparks = (frameScale: number) => {
+    const drag = Math.pow(0.9, frameScale);
     for (const s of sparksRef.current) {
-      s.x += s.vx;
-      s.y += s.vy;
-      s.vx *= 0.9;
-      s.vy *= 0.9;
-      s.vy += 0.1;
-      s.life -= 0.035;
+      s.x += s.vx * frameScale;
+      s.y += s.vy * frameScale;
+      s.vx *= drag;
+      s.vy *= drag;
+      s.vy += 0.1 * frameScale;
+      s.life -= 0.035 * frameScale;
     }
     sparksRef.current = sparksRef.current.filter((s) => s.life > 0);
   };
 
-  const updatePopups = (dt: number) => {
+  const updatePopups = (dt: number, frameScale: number) => {
     for (const p of popupsRef.current) {
-      p.y += p.vy;
+      p.y += p.vy * frameScale;
       p.life -= dt / CFG.popup.lifeMs;
     }
     popupsRef.current = popupsRef.current.filter((p) => p.life > 0);
