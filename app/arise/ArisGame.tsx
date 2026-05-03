@@ -682,25 +682,23 @@ export default function ArisGame() {
     canvas.width = CFG.canvas.w * dpr;
     canvas.height = CFG.canvas.h * dpr;
 
-    // Fixed-timestep loop. The original update() was tuned at 60fps and
-    // applies movement per-frame without dt scaling for most physics, so on
-    // a phone running at 30 fps the game ran at half speed. We now run the
-    // update step at a fixed 60 Hz regardless of how often the browser
-    // actually animates — if a frame is slow, the accumulator catches us up
-    // with multiple update steps; if it's fast, render still runs once.
-    const FIXED_DT = 1000 / 60;          // 16.667 ms — game's tuned tick
-    const MAX_FRAME_DT = 100;            // bail out if tab was backgrounded
+    // The game's update() applies movement per-frame without dt scaling for
+    // most physics, so on a phone at 30fps it'd run at half speed. To keep
+    // desktop identical to the original tuning while catching mobile up:
+    // every rAF, work out how many 60Hz "frames worth" of time has passed
+    // and run that many update steps. On 60Hz desktop this is always 1
+    // (identical to the original loop). On 30Hz mobile it's 2 (corrects
+    // the half-speed bug). Always at least 1 step so the game never stalls.
+    const TARGET_FRAME = 1000 / 60;       // 16.667 ms tuned tick
+    const MAX_FRAME_DT = 100;             // bail out if tab was backgrounded
     let lastTime = performance.now();
-    let accumulator = 0;
     const tick = (now: number) => {
-      const frameDt = Math.min(MAX_FRAME_DT, now - lastTime);
+      const dt = Math.min(MAX_FRAME_DT, now - lastTime);
       lastTime = now;
-      accumulator += frameDt;
-      // Cap accumulator to avoid death-spiral on really slow devices.
-      if (accumulator > 200) accumulator = 200;
-      while (accumulator >= FIXED_DT) {
-        updateRef.current(FIXED_DT, now);
-        accumulator -= FIXED_DT;
+      const steps = Math.max(1, Math.round(dt / TARGET_FRAME));
+      const stepDt = dt / steps;
+      for (let i = 0; i < steps; i++) {
+        updateRef.current(stepDt, now);
       }
       renderRef.current(ctx, dpr);
       rafRef.current = requestAnimationFrame(tick);
