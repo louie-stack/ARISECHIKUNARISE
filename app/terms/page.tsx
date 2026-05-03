@@ -11,7 +11,7 @@ const SECTIONS: { heading: string; body: string[] }[] = [
     heading: "1. NATURE OF $CHIKUN",
     body: [
       "$CHIKUN is a cultural movement and memecoin. It has no intrinsic value, no utility, no team promises, no roadmap, and no expectation of financial return. Participation is purely for the culture.",
-      "This website, the ARISE arcade minigame, and any associated art, copy, or media are creative expressions of that cultural movement. Nothing on this site constitutes a prospectus, offer, or solicitation of any kind.",
+      "This website, the CHIKUN'S ESCAPE arcade minigame, and any associated art, copy, or media are creative expressions of that cultural movement. Nothing on this site constitutes a prospectus, offer, or solicitation of any kind.",
     ],
   },
   {
@@ -38,7 +38,7 @@ const SECTIONS: { heading: string; body: string[] }[] = [
   {
     heading: "5. LIMITATION OF LIABILITY",
     body: [
-      "To the maximum extent permitted by law, no person associated with the $CHIKUN project, this website, or the ARISE minigame accepts liability for any direct, indirect, incidental, consequential, or punitive damages arising from your use of this site or any token or service connected to it.",
+      "To the maximum extent permitted by law, no person associated with the $CHIKUN project, this website, or the CHIKUN'S ESCAPE minigame accepts liability for any direct, indirect, incidental, consequential, or punitive damages arising from your use of this site or any token or service connected to it.",
     ],
   },
   {

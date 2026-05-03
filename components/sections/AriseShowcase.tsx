@@ -151,7 +151,7 @@ export default function AriseShowcase() {
         <div className="arise-tile md:col-span-2 relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-blue/25 via-ink to-ink p-8 md:p-10 overflow-hidden group">
           <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-glow/10 blur-3xl pointer-events-none" />
           <span className="font-black text-glow text-xs tracking-[0.35em]">
-            MINIGAME · ARISE
+            MINIGAME · CHIKUN&apos;S ESCAPE
           </span>
           <h3
             className="mt-4 font-bold leading-[0.9] tracking-tight"
@@ -311,7 +311,7 @@ export default function AriseShowcase() {
         <Link
           href="/arise#leaderboard"
           className="arise-tile relative rounded-2xl border-2 border-bone/15 bg-gradient-to-br from-glow/10 via-ink to-ink p-6 min-h-[320px] flex flex-col cursor-pointer"
-          aria-label="View the full ARISE leaderboard"
+          aria-label="View the full CHIKUN'S ESCAPE leaderboard"
         >
           <div className="flex items-center justify-between mb-4">
             <span className="tape tape-mint" style={{ fontSize: "0.65rem" }}>

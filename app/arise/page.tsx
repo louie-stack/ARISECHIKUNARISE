@@ -3,7 +3,7 @@ import ArisGame from "./ArisGame";
 import Leaderboard from "./Leaderboard";
 
 export const metadata: Metadata = {
-  title: "ARISE · Chikun",
+  title: "CHIKUN'S ESCAPE",
   description:
     "The Elite clipped his wings. LitVM gave them back. Tap to flap, dodge Big Corp, reclaim the sky.",
 };

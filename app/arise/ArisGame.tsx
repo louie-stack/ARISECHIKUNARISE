@@ -2279,7 +2279,7 @@ export default function ArisGame() {
       if (nav.canShare && nav.canShare({ files: [file] }) && nav.share) {
         await nav.share({
           files: [file],
-          title: "ARISE",
+          title: "CHIKUN'S ESCAPE",
           text: `I flew ${lastScore} in CHIKUN'S ESCAPE. Join the flock.`,
         });
         setShareToast("Shared");
@@ -2324,7 +2324,7 @@ export default function ArisGame() {
             ROTATE YOUR DEVICE
           </div>
           <div className="text-[#2dff5c] font-black text-[11px] tracking-[0.35em] mb-6">
-            ARISE IS BEST FLOWN IN LANDSCAPE
+            CHIKUN&apos;S ESCAPE IS BEST FLOWN IN LANDSCAPE
           </div>
           <div className="text-white/50 font-black text-[10px] tracking-[0.3em] max-w-[260px] leading-relaxed">
             TURN YOUR PHONE SIDEWAYS TO RECLAIM THE SKY
@@ -2455,9 +2455,9 @@ export default function ArisGame() {
               </div>
               <h1
                 className="text-black font-black leading-[0.85] tracking-tight mt-2"
-                style={{ fontSize: "clamp(80px, 18vw, 160px)" }}
+                style={{ fontSize: "clamp(72px, 16vw, 144px)" }}
               >
-                ARISE
+                CHIKUN&apos;S
               </h1>
               <div
                 className="font-black leading-[0.9] tracking-tight -mt-1"
@@ -2467,7 +2467,7 @@ export default function ArisGame() {
                   transform: "rotate(-3deg)",
                 }}
               >
-                CHIKUN
+                ESCAPE
               </div>
               <div className="mt-4 text-black/80 text-sm font-semibold max-w-[320px] leading-snug">
                 The Elite clipped your wings. LitVM gave them back. Reclaim the sky.
@@ -2480,7 +2480,7 @@ export default function ArisGame() {
             </div>
             <div className="flex flex-col items-center gap-3 mb-2 pointer-events-auto">
               <div className="px-7 py-3 bg-black text-white font-black tracking-[0.15em] text-lg rounded-full shadow-[4px_4px_0_0_rgba(0,0,0,0.25)]">
-                TAP TO ARISE
+                TAP TO ESCAPE
               </div>
               <div className="text-[10px] tracking-[0.3em] text-black/60 font-bold">
                 SPACE · CLICK · TAP · M MUTE · P PAUSE
@@ -2643,7 +2643,7 @@ export default function ArisGame() {
             <div className="pointer-events-auto flex gap-2 mt-2 flex-wrap justify-center">
               {!showNamePrompt && (
                 <div className="px-7 py-3 bg-[#00d632] text-black font-black tracking-[0.15em] text-lg rounded-full border-2 border-black shadow-[4px_4px_0_0_#000]">
-                  TAP TO ARISE AGAIN
+                  TAP TO ESCAPE AGAIN
                 </div>
               )}
               <button
