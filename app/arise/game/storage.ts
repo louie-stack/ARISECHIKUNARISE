@@ -1,10 +1,12 @@
 /**
  * Persistent save state. All ARISE data behind one key so it's easy to wipe.
  */
+import { getSupabase, supabaseConfigured } from "./supabase";
 
 const KEY = "arise-save-v2";
 export const LEADERBOARD_SIZE = 20;
 export const LEADERBOARD_EVENT = "arise-leaderboard-update";
+export const LEADERBOARD_TABLE = "leaderboard";
 
 export interface LeaderboardEntry {
   name: string;
@@ -104,11 +106,17 @@ export function updateSave(patch: Partial<SaveState>): SaveState {
 
 // ============================================================
 // LEADERBOARD
-// The local leaderboard is the source of truth for `<Leaderboard />`.
-// Swap this file out (or wrap these helpers) when a remote backend ships —
-// the game code only touches `qualifiesForLeaderboard` and `submitLeaderboardEntry`.
+// Source of truth is the Supabase `leaderboard` table when configured.
+// `loadSave().leaderboard` is a local cache populated by `fetchLeaderboard`
+// so the UI can render instantly while a fresh fetch is in flight.
+// If Supabase isn't configured, everything falls back to local-only.
+// The game code only touches `qualifiesForLeaderboard`, `submitLeaderboardEntry`,
+// and `fetchLeaderboard`.
 // ============================================================
 export function qualifiesForLeaderboard(score: number): boolean {
+  // We always attempt to submit non-zero scores; the server holds the real
+  // top-N and trims naturally via ordering. Local cache is just an optimistic
+  // gate to skip definitely-unqualifying writes.
   if (score <= 0) return false;
   const cur = loadSave();
   if (cur.leaderboard.length < LEADERBOARD_SIZE) return true;
@@ -116,24 +124,75 @@ export function qualifiesForLeaderboard(score: number): boolean {
   return score > cutoff;
 }
 
-export function submitLeaderboardEntry(
+interface RemoteRow {
+  name: string;
+  score: number;
+  coins: number;
+  towers: number;
+  zone: number;
+  created_at: string;
+}
+
+function rowToEntry(r: RemoteRow): LeaderboardEntry {
+  return {
+    name: r.name,
+    score: r.score,
+    coins: r.coins,
+    towers: r.towers,
+    zone: r.zone,
+    timestamp: new Date(r.created_at).getTime(),
+  };
+}
+
+export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
+  const sb = getSupabase();
+  if (!sb) return loadSave().leaderboard;
+  const { data, error } = await sb
+    .from(LEADERBOARD_TABLE)
+    .select("name,score,coins,towers,zone,created_at")
+    .order("score", { ascending: false })
+    .order("created_at", { ascending: true })
+    .limit(LEADERBOARD_SIZE);
+  if (error || !data) return loadSave().leaderboard;
+  const entries = (data as RemoteRow[]).map(rowToEntry);
+  updateSave({ leaderboard: entries });
+  return entries;
+}
+
+export async function submitLeaderboardEntry(
   entry: Omit<LeaderboardEntry, "timestamp">
-): SaveState {
-  const cur = loadSave();
+): Promise<SaveState> {
   const name = (entry.name || "ANON").slice(0, 12).toUpperCase();
+  const sb = getSupabase();
+  if (sb) {
+    await sb.from(LEADERBOARD_TABLE).insert({
+      name,
+      score: entry.score,
+      coins: entry.coins,
+      towers: entry.towers,
+      zone: entry.zone,
+    });
+    const fresh = await fetchLeaderboard();
+    const out = updateSave({ leaderboard: fresh, playerName: name });
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent(LEADERBOARD_EVENT));
+    }
+    return out;
+  }
+  // Local-only fallback when Supabase env vars aren't set.
+  const cur = loadSave();
   const e: LeaderboardEntry = { ...entry, name, timestamp: Date.now() };
   const next = [...cur.leaderboard, e]
     .sort((a, b) => b.score - a.score || a.timestamp - b.timestamp)
     .slice(0, LEADERBOARD_SIZE);
-  const out = updateSave({
-    leaderboard: next,
-    playerName: name,
-  });
+  const out = updateSave({ leaderboard: next, playerName: name });
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent(LEADERBOARD_EVENT));
   }
   return out;
 }
+
+export const isLeaderboardRemote = supabaseConfigured;
 
 // Today's seed in UTC YYYY-MM-DD form — used for the daily challenge.
 export function todaySeed(): string {

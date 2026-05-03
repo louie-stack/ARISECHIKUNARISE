@@ -576,15 +576,18 @@ export default function ArisGame() {
     } else {
       setShowNamePrompt(false);
       if (next.playerName && qualifiesForLeaderboard(finalScore)) {
-        const afterSubmit = submitLeaderboardEntry({
+        // Fire-and-forget so death animations aren't blocked by the network.
+        // setSubmittedEntry flips when the row lands and the board refreshes.
+        submitLeaderboardEntry({
           name: next.playerName,
           score: finalScore,
           coins: finalCoins,
           towers: finalTowers,
           zone: finalZoneIdx + 1,
+        }).then((afterSubmit) => {
+          setSaveUi(afterSubmit);
+          setSubmittedEntry(true);
         });
-        setSaveUi(afterSubmit);
-        setSubmittedEntry(true);
       }
     }
 
@@ -2181,8 +2184,9 @@ export default function ArisGame() {
     [save, mutateSave]
   );
 
-  const submitName = useCallback(() => {
-    const next = submitLeaderboardEntry({
+  const submitName = useCallback(async () => {
+    setShowNamePrompt(false);
+    const next = await submitLeaderboardEntry({
       name: nameInput.trim() || "ANON",
       score: lastScore,
       coins: lastCoins,
@@ -2191,7 +2195,6 @@ export default function ArisGame() {
     });
     setSaveUi(next);
     setSubmittedEntry(true);
-    setShowNamePrompt(false);
   }, [nameInput, lastScore, lastCoins, lastTowers, save]);
 
   // Opens X's tweet intent in a new tab, prefilled with the player's score

@@ -5,10 +5,14 @@ import { Crown } from "lucide-react";
 import {
   LEADERBOARD_EVENT,
   LEADERBOARD_SIZE,
+  LEADERBOARD_TABLE,
+  fetchLeaderboard,
+  isLeaderboardRemote,
   loadSave,
   type LeaderboardEntry,
   type SaveState,
 } from "./game/storage";
+import { getSupabase } from "./game/supabase";
 import { ZONES } from "./game/config";
 
 function zoneName(zone: number) {
@@ -38,21 +42,51 @@ export default function Leaderboard() {
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    const refresh = () => {
-      const save = loadSave();
-      setState({ entries: save.leaderboard ?? [], save });
+    let cancelled = false;
+
+    // Render local cache immediately, then refresh from Supabase.
+    const initial = loadSave();
+    setState({ entries: initial.leaderboard ?? [], save: initial });
+
+    const refresh = async () => {
+      const entries = await fetchLeaderboard();
+      if (cancelled) return;
+      setState({ entries, save: loadSave() });
     };
     refresh();
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === null || e.key.startsWith("arise-")) refresh();
+
+    const onLocal = () => {
+      // Other components (e.g. game submission) updated the local save;
+      // re-read it so the "YOUR BEST / YOUR RANK" stats update instantly.
+      setState({ entries: loadSave().leaderboard ?? [], save: loadSave() });
+      refresh();
     };
-    window.addEventListener(LEADERBOARD_EVENT, refresh);
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === null || e.key.startsWith("arise-")) onLocal();
+    };
+    window.addEventListener(LEADERBOARD_EVENT, onLocal);
     window.addEventListener("storage", onStorage);
+
+    // Realtime: refetch whenever any user inserts a new score.
+    const sb = isLeaderboardRemote ? getSupabase() : null;
+    const channel = sb
+      ? sb
+          .channel("leaderboard-stream")
+          .on(
+            "postgres_changes",
+            { event: "INSERT", schema: "public", table: LEADERBOARD_TABLE },
+            () => refresh()
+          )
+          .subscribe()
+      : null;
+
     const tick = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => {
-      window.removeEventListener(LEADERBOARD_EVENT, refresh);
+      cancelled = true;
+      window.removeEventListener(LEADERBOARD_EVENT, onLocal);
       window.removeEventListener("storage", onStorage);
       window.clearInterval(tick);
+      if (channel && sb) sb.removeChannel(channel);
     };
   }, []);
 
@@ -175,7 +209,9 @@ export default function Leaderboard() {
       </div>
 
       <div className="mt-5 text-center text-[10px] tracking-[0.3em] text-bone/40 font-black">
-        SCORES STORED ON THIS DEVICE · PLAY TO CLAIM A SEAT
+        {isLeaderboardRemote
+          ? "LIVE GLOBAL BOARD · PLAY TO CLAIM A SEAT"
+          : "SCORES STORED ON THIS DEVICE · PLAY TO CLAIM A SEAT"}
       </div>
     </section>
   );
