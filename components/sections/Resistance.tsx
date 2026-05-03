@@ -134,7 +134,7 @@ export default function Resistance() {
                 {c.name}
               </h3>
 
-              <p className="prose-normal mt-3 text-base md:text-lg leading-snug text-bone/75 min-h-[5.5rem]">
+              <p className="prose-normal mt-3 text-base md:text-lg leading-snug text-bone/75 md:min-h-[5.5rem]">
                 {c.description}
               </p>
             </div>
