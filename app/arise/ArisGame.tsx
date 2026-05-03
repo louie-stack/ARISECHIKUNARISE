@@ -202,7 +202,7 @@ export default function ArisGame() {
   // ---- Closure mirror refs: RAF tick only sees the update/render versions
   // captured when the game-loop useEffect first ran, so we forward latest
   // versions through refs that are re-assigned on every React render. ----
-  const updateRef = useRef<(dt: number, now: number) => void>(() => {});
+  const updateRef = useRef<(dt: number, now: number, frameScale: number) => void>(() => {});
   const renderRef = useRef<(ctx: CanvasRenderingContext2D, dpr: number) => void>(
     () => {}
   );
@@ -722,29 +722,42 @@ export default function ArisGame() {
     canvas.width = CFG.canvas.w * dpr;
     canvas.height = CFG.canvas.h * dpr;
 
-    // Original game loop — one update per rAF call with the actual
-    // elapsed dt. Game was tuned this way; combined with frameScale
-    // inside update() this stays correct at any refresh rate.
-    //
-    // dt cap is 100ms (was 33ms): the old cap meant that when mobile
-    // dropped below 30fps, frameScale was clamped to 1.98 even though
-    // real time advanced more — so physics under-corrected and the
-    // game appeared to run in slow motion. With cap=100, frameScale
-    // can scale up to 6.0, covering any mobile down to 10fps. Desktop
-    // dt is always ~16ms so this cap doesn't affect it. Tab unfreeze
-    // is handled via visibilitychange to avoid the 100ms jump.
+    // Two completely separate loops — desktop and mobile — so I can
+    // iterate on mobile without ever touching the desktop game feel.
     let lastTime = performance.now();
     const onVisibility = () => {
       if (!document.hidden) lastTime = performance.now();
     };
     document.addEventListener("visibilitychange", onVisibility);
-    const tick = (now: number) => {
-      const dt = Math.min(100, now - lastTime);
-      lastTime = now;
-      updateRef.current(dt, now);
-      renderRef.current(ctx, dpr);
-      rafRef.current = requestAnimationFrame(tick);
-    };
+
+    let tick: (now: number) => void;
+    if (isMobile) {
+      // MOBILE LOOP — dt cap 100 (allows frameScale up to 6 for slow
+      // devices), frameScale boost so mobile runs at 60Hz+ tuning even
+      // when the device renders at 30fps. The 1.5× multiplier on top of
+      // the natural ratio gives mobile a slight speed bias to feel
+      // snappier; can be tuned independently of desktop.
+      tick = (now: number) => {
+        const dt = Math.min(100, now - lastTime);
+        lastTime = now;
+        const frameScale = Math.max(1, (dt / (1000 / 60)) * 1.5);
+        updateRef.current(dt, now, frameScale);
+        renderRef.current(ctx, dpr);
+        rafRef.current = requestAnimationFrame(tick);
+      };
+    } else {
+      // DESKTOP LOOP — original code, byte-identical to the version that
+      // shipped before any mobile work. Always passes frameScale=1 so the
+      // update function's per-frame physics behave exactly like the
+      // pre-fix tuning. DO NOT MODIFY THIS BRANCH for mobile-only fixes.
+      tick = (now: number) => {
+        const dt = Math.min(33, now - lastTime);
+        lastTime = now;
+        updateRef.current(dt, now, 1);
+        renderRef.current(ctx, dpr);
+        rafRef.current = requestAnimationFrame(tick);
+      };
+    }
     rafRef.current = requestAnimationFrame(tick);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -756,22 +769,14 @@ export default function ArisGame() {
   // ============================================================
   // UPDATE
   // ============================================================
-  const update = (dt: number, now: number) => {
+  const update = (dt: number, now: number, frameScale: number) => {
     if (paused) return;
     const state = stateRef.current;
 
-    // Frame-rate compensation factor. CRUCIAL: clamped at minimum 1.0 so
-    // high-refresh-rate desktops (120/144Hz) keep their original behavior
-    // — pre-fix the game ran at fps × 1 update per second (so 144 ups on
-    // a 144Hz display, "overspeed" relative to 60Hz tuning, but that's
-    // what the desktop experience was tuned to feel like). Without the
-    // Math.max clamp, frameScale would be 0.42 at 144Hz and slow desktop
-    // gameplay 2.4× — which is exactly the regression the user kept
-    // hitting. With clamp:
-    //   60+ Hz: frameScale = 1.0, physics × 1, identical to original
-    //   30 Hz mobile: frameScale = 2.0, physics × 2, matches 60Hz speed
-    //   45 Hz mid-range: frameScale = 1.33, scaled accordingly
-    const frameScale = Math.max(1, dt / (1000 / 60));
+    // frameScale is provided by the caller (game loop). Desktop always
+    // passes 1 → physics × 1, byte-identical to original tuning. Mobile
+    // passes Math.max(1, dt/16.667 × boost) so per-call movement scales
+    // with how slow the device is actually rendering.
 
     // Decay juice state every frame regardless of freeze
     flapScaleTRef.current = Math.max(
