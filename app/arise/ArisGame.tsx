@@ -37,7 +37,7 @@ import {
   todaySeed,
   seededRng,
   submitLeaderboardEntry,
-  qualifiesForLeaderboard,
+  LEADERBOARD_SIZE,
   type SaveState,
 } from "./game/storage";
 import {
@@ -282,7 +282,10 @@ export default function ArisGame() {
   const [shareToast, setShareToast] = useState("");
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [nameInput, setNameInput] = useState("");
-  const [submittedEntry, setSubmittedEntry] = useState(false);
+  // null = nothing submitted this run; rank>0 = made the top 20; rank=null = recorded but missed.
+  const [submissionResult, setSubmissionResult] = useState<
+    { submitted: boolean; rank: number | null } | null
+  >(null);
   const [portraitBlocked, setPortraitBlocked] = useState(false);
 
   // ============================================================
@@ -564,31 +567,14 @@ export default function ArisGame() {
     setSaveUi(next);
     setNewAchievements(newlyUnlocked);
 
-    // Leaderboard submission — every run auto-submits with the stored
-    // handle so the board populates naturally. First-time players get a
-    // one-off prompt to pick a handle; once set, future runs submit
-    // silently. Non-qualifying scores are skipped to avoid redundant
-    // save writes (they'd be trimmed off the top-N anyway).
-    setSubmittedEntry(false);
-    if (!next.playerName && finalScore > 0) {
-      setNameInput("");
+    // Leaderboard — always offer the prompt so every player names their run.
+    // Previous handle pre-fills so returning players can just hit Enter.
+    setSubmissionResult(null);
+    if (finalScore > 0) {
+      setNameInput(next.playerName || "");
       setShowNamePrompt(true);
     } else {
       setShowNamePrompt(false);
-      if (next.playerName && qualifiesForLeaderboard(finalScore)) {
-        // Fire-and-forget so death animations aren't blocked by the network.
-        // setSubmittedEntry flips when the row lands and the board refreshes.
-        submitLeaderboardEntry({
-          name: next.playerName,
-          score: finalScore,
-          coins: finalCoins,
-          towers: finalTowers,
-          zone: finalZoneIdx + 1,
-        }).then((afterSubmit) => {
-          setSaveUi(afterSubmit);
-          setSubmittedEntry(true);
-        });
-      }
     }
 
     // Death juice
@@ -2186,15 +2172,23 @@ export default function ArisGame() {
 
   const submitName = useCallback(async () => {
     setShowNamePrompt(false);
+    const handle = (nameInput.trim() || "ANON").slice(0, 12).toUpperCase();
     const next = await submitLeaderboardEntry({
-      name: nameInput.trim() || "ANON",
+      name: handle,
       score: lastScore,
       coins: lastCoins,
       towers: lastTowers,
       zone: (save?.maxZoneReached ?? 1),
     });
     setSaveUi(next);
-    setSubmittedEntry(true);
+    // Find our row in the fresh top-N. findIndex on (name, score) is fine —
+    // ties are sorted by created_at asc, so the highest-ranked match is the
+    // one to surface in the feedback.
+    const rankIdx = next.leaderboard.findIndex(
+      (e) => e.name === handle && e.score === lastScore
+    );
+    const rank = rankIdx >= 0 ? rankIdx + 1 : null;
+    setSubmissionResult({ submitted: true, rank });
   }, [nameInput, lastScore, lastCoins, lastTowers, save]);
 
   // Opens X's tweet intent in a new tab, prefilled with the player's score
@@ -2580,27 +2574,39 @@ export default function ArisGame() {
                   autoFocus
                   className="w-full bg-black text-white font-black text-base tracking-[0.25em] text-center px-3 py-2 border-2 border-white/20 rounded focus:outline-none focus:border-[#00d632] uppercase"
                 />
-                <div className="flex gap-2 w-full">
-                  <button
-                    type="button"
-                    onClick={submitName}
-                    className="flex-1 bg-[#00d632] text-black font-black text-sm tracking-widest py-2 rounded border-2 border-black"
-                  >
-                    SUBMIT
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowNamePrompt(false)}
-                    className="bg-black text-white font-black text-sm tracking-widest py-2 px-3 rounded border-2 border-white/20"
-                  >
-                    SKIP
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={submitName}
+                  className="w-full bg-[#00d632] text-black font-black text-sm tracking-widest py-2 rounded border-2 border-black"
+                >
+                  SUBMIT SCORE
+                </button>
               </div>
             )}
-            {submittedEntry && (
-              <div className="text-[#00d632] font-black text-[11px] tracking-[0.3em]">
-                ★ ADDED TO LEADERBOARD
+            {submissionResult?.submitted && submissionResult.rank !== null && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  document
+                    .getElementById("leaderboard")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="pointer-events-auto flex flex-col items-center gap-0.5 bg-[#00d632] text-black font-black px-4 py-2 rounded-xl border-2 border-black shadow-[3px_3px_0_0_#000] -rotate-1"
+              >
+                <div className="text-xs tracking-[0.25em]">
+                  ★ #{submissionResult.rank} ON THE LEADERBOARD ★
+                </div>
+                <div className="text-[10px] tracking-[0.2em] opacity-80">
+                  TAP TO SEE IT
+                </div>
+              </button>
+            )}
+            {submissionResult?.submitted && submissionResult.rank === null && (
+              <div className="text-bone/70 font-black text-[11px] tracking-[0.25em] text-center max-w-[240px]">
+                SCORE RECORDED — DIDN&apos;T CRACK THE TOP {LEADERBOARD_SIZE}.
+                <br />
+                FLAP HARDER.
               </div>
             )}
 

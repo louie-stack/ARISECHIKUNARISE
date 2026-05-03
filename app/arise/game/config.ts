@@ -177,7 +177,7 @@ export const ZONES: Zone[] = [
       windowColor: "#ffd27a",
       windowIntensity: 0.5,
     },
-    modifiers: { drones: true },
+    modifiers: {},
   },
   {
     id: 2,
