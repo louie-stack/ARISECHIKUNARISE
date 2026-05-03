@@ -30,6 +30,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Preload the hero WebP so the homepage paints with the image
+            already in cache — eliminates the progressive-paint feel on
+            slow connections. Next 14 hoists this into <head>. */}
+        <link
+          rel="preload"
+          as="image"
+          href="/art/hero/chikun-hero.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
+      </head>
       <body className="min-h-screen bg-ink">
         <Navigation />
         <main>{children}</main>

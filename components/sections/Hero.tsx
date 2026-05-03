@@ -1,14 +1,19 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 
-const HERO_SRC = "/art/hero/chikun-hero.png";
+const HERO_WEBP = "/art/hero/chikun-hero.webp";
+const HERO_PNG = "/art/hero/chikun-hero.png";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   useScrollProgress(sectionRef);
+  // Fade-in once the image fully decodes — keeps the user from watching the
+  // PNG/WebP paint progressively. The blue section bg already matches the
+  // image edges, so an invisible-then-fade-in feels seamless.
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <section
@@ -28,21 +33,33 @@ export default function Hero() {
             }}
           >
             <div className="relative animate-float-slow">
-              {/* Sharp image — the corners of the rectangle are masked out
-                  entirely (the ellipse boundary cuts them off) and the
-                  edges fade softly into transparency. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={HERO_SRC}
-                alt="Chikun standing triumphant over fallen henchmen, CHIKUN wordmark behind"
-                className="relative z-10 h-[75vh] md:h-[90vh] max-w-full w-auto object-contain"
-                style={{
-                  WebkitMaskImage:
-                    "radial-gradient(ellipse 160% 100% at 50% 50%, black 78%, transparent 100%)",
-                  maskImage:
-                    "radial-gradient(ellipse 160% 100% at 50% 50%, black 78%, transparent 100%)",
-                }}
-              />
+              {/* Sharp image — corners of the rectangle are masked out
+                  entirely (the ellipse boundary cuts them off) and edges
+                  fade softly into transparency. WebP for modern browsers
+                  (~140 KB), PNG fallback (~1.4 MB) for the long tail. */}
+              <picture>
+                <source srcSet={HERO_WEBP} type="image/webp" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={HERO_PNG}
+                  alt="Chikun standing triumphant over fallen henchmen, CHIKUN wordmark behind"
+                  width={2400}
+                  height={1018}
+                  decoding="async"
+                  // @ts-expect-error - fetchPriority is a valid React 18.3+ HTML attribute
+                  fetchpriority="high"
+                  onLoad={() => setImgLoaded(true)}
+                  className={`relative z-10 h-[75vh] md:h-[90vh] max-w-full w-auto object-contain transition-opacity duration-500 ${
+                    imgLoaded ? "opacity-100" : "opacity-0"
+                  }`}
+                  style={{
+                    WebkitMaskImage:
+                      "radial-gradient(ellipse 160% 100% at 50% 50%, black 78%, transparent 100%)",
+                    maskImage:
+                      "radial-gradient(ellipse 160% 100% at 50% 50%, black 78%, transparent 100%)",
+                  }}
+                />
+              </picture>
 
               {/* Bg-blue vignette — sized to reach the farthest corner of
                   the image rectangle, so the actual corners get painted in
