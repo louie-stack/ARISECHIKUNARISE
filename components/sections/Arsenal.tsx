@@ -437,7 +437,7 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md bg-ink border-2 border-black rounded-xl shadow-[6px_6px_0_0_#0A0A0F] text-bone overflow-hidden"
+        className="relative w-full max-w-md max-h-[calc(100svh-2rem)] bg-ink border-2 border-black rounded-xl shadow-[6px_6px_0_0_#0A0A0F] text-bone overflow-y-auto overflow-x-hidden"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-black bg-black/80 px-5 py-3">

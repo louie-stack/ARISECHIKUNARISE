@@ -155,14 +155,17 @@ export default function NewEra() {
           <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96">
             {/* Coin image — tilt/bounce loop. multiply blend hides the white
                 export bg against the bone section. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/arise/chikun-coin-1.png"
-              alt="$CHIKUN coin"
-              draggable={false}
-              className="chikun-coin-spin absolute inset-0 w-full h-full object-contain select-none"
-              style={{ mixBlendMode: "multiply" }}
-            />
+            <picture>
+              <source srcSet="/arise/chikun-coin-1.webp" type="image/webp" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/arise/chikun-coin-1.png"
+                alt="$CHIKUN coin"
+                draggable={false}
+                className="chikun-coin-spin absolute inset-0 w-full h-full object-contain select-none"
+                style={{ mixBlendMode: "multiply" }}
+              />
+            </picture>
 
             {/* Small $CHIKUN tag under the coin */}
             <div

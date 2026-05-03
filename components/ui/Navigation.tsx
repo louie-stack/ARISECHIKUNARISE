@@ -49,14 +49,19 @@ export default function Navigation() {
           href="/"
           className="flex items-center gap-2 bg-bone border-2 border-ink rounded-full pl-4 pr-5 py-1 shadow-[4px_4px_0_#0A0A0F] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_#0A0A0F] transition-all"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/arise/chikun-coin-1.png"
-            alt=""
-            className="w-10 h-10 object-contain select-none"
-            style={{ mixBlendMode: "multiply" }}
-            draggable={false}
-          />
+          <picture>
+            <source srcSet="/arise/chikun-coin-1.webp" type="image/webp" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/arise/chikun-coin-1.png"
+              alt=""
+              width={40}
+              height={40}
+              className="w-10 h-10 object-contain select-none"
+              style={{ mixBlendMode: "multiply" }}
+              draggable={false}
+            />
+          </picture>
           <span className="font-black text-ink text-base tracking-tight hidden sm:inline">
             $CHIKUN
           </span>

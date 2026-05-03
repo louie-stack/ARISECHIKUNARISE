@@ -181,7 +181,7 @@ export default function AriseShowcase() {
             loop
             playsInline
             preload="metadata"
-            poster="/arise/chikun-flap.png"
+            poster="/arise/chikun-flap.webp"
             className="absolute inset-0 w-full h-full object-cover scale-100 md:scale-[1.18] md:translate-x-[2%]"
             style={{
               // Desktop zoom anchored toward the lower-right so the upper sky
@@ -220,15 +220,18 @@ export default function AriseShowcase() {
             FACE BIG CORP
           </span>
           <div className="flex-1 flex items-center justify-center my-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/arise/big-corp.png"
-              alt=""
-              className="max-h-48 w-auto drop-shadow-[4px_4px_0_rgba(196,30,58,0.4)]"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-              }}
-            />
+            <picture>
+              <source srcSet="/arise/big-corp.webp" type="image/webp" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/arise/big-corp.png"
+                alt=""
+                className="max-h-48 w-auto drop-shadow-[4px_4px_0_rgba(196,30,58,0.4)]"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
+                }}
+              />
+            </picture>
           </div>
           <div>
             <p className="font-bold tracking-tight text-lg leading-none mt-2">BOSSES</p>
