@@ -722,30 +722,16 @@ export default function ArisGame() {
     canvas.width = CFG.canvas.w * dpr;
     canvas.height = CFG.canvas.h * dpr;
 
-    // Fixed-timestep accumulator. The game's update() applies movement
-    // per-frame without dt scaling for most physics; tuned at 60Hz. We
-    // accumulate real time and run as many fixed 16.667ms ticks as needed
-    // to keep up. This guarantees exactly 60 update calls per real second
-    // regardless of how the browser actually paces rAF — fixes the slow
-    // gameplay seen on phones running between 30-55fps under thermal /
-    // battery throttling. The +TOLERANCE handles the case where browser
-    // rAF fires at 16.5ms on a 60Hz display (precision below the strict
-    // threshold) which broke a previous attempt at this loop.
-    const TARGET_FRAME = 1000 / 60;       // 16.667 ms tuned tick
-    const TOLERANCE = 0.5;                // ms — covers rAF jitter
-    const MAX_FRAME_DT = 250;             // bail out on tab backgrounding
-    const MAX_PENDING = 500;              // avoid death-spiral on slow devices
+    // Original game loop — one update per rAF call with the actual
+    // elapsed dt. Game was tuned this way; reverting after several
+    // accumulator/step variants caused regressions on different
+    // refresh rates. Mobile may run somewhat slower if frame rate
+    // drops below 60fps, but DPR-cap above mitigates the worst of it.
     let lastTime = performance.now();
-    let pending = 0;
     const tick = (now: number) => {
-      const dt = Math.min(MAX_FRAME_DT, now - lastTime);
+      const dt = Math.min(33, now - lastTime);
       lastTime = now;
-      pending += dt;
-      if (pending > MAX_PENDING) pending = MAX_PENDING;
-      while (pending + TOLERANCE >= TARGET_FRAME) {
-        updateRef.current(TARGET_FRAME, now);
-        pending -= TARGET_FRAME;
-      }
+      updateRef.current(dt, now);
       renderRef.current(ctx, dpr);
       rafRef.current = requestAnimationFrame(tick);
     };

@@ -446,16 +446,27 @@ body.is-arise-fullscreen .arise-page {
 body.is-arise-fullscreen #leaderboard {
   display: none !important;
 }
+/* In fullscreen, drop the frame's chrome (border / shadow / radius) and
+   let the existing inline-style sizing logic on .ariseFrame fill the
+   viewport while preserving the 16:9 aspect ratio. The frame already
+   reads `var(--arise-vh, 86vh)` for height, so setting --arise-vh to
+   the full viewport height makes the canvas as big as it can be without
+   stretching the artwork. Letterboxing on the sides (or top/bottom in
+   portrait) is intentional — same as YouTube. */
 body.is-arise-fullscreen .ariseFrame {
   --arise-vh: var(--arise-vh-px, 100dvh);
   border-width: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  width: 100vw !important;
-  max-width: 100vw !important;
-  height: var(--arise-vh-px, 100dvh) !important;
-  max-height: var(--arise-vh-px, 100dvh) !important;
-  aspect-ratio: auto !important;
+}
+/* Center the (potentially letterboxed) frame inside the fullscreen page
+   without the surrounding flex column eating space. */
+body.is-arise-fullscreen .arise-page > div:first-child {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .comb-edge-top {
