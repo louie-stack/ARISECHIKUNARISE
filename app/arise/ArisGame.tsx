@@ -64,7 +64,6 @@ import {
   SPRITE_SRCS,
   type SpriteSource,
 } from "./game/sprites";
-import Link from "next/link";
 
 // ============================================================
 // TYPES
@@ -288,50 +287,71 @@ export default function ArisGame() {
   const [submissionResult, setSubmissionResult] = useState<
     { submitted: boolean; rank: number | null } | null
   >(null);
-  const [portraitBlocked, setPortraitBlocked] = useState(false);
+  // YouTube-style fullscreen: user opts in via a button. No auto-rotate
+  // prompt, no auto-fullscreen-on-landscape. The page lays out the same
+  // on mobile as desktop (game frame + leaderboard below), but the user
+  // can tap the maximize button in the HUD to expand the canvas.
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Tag <body> while the arise page is mounted. Replaces the body:has()
-  // CSS selector (spotty support on older mobile browsers) — globals.css
-  // uses .is-arise-page to hide the site nav/footer in landscape so the
-  // canvas can fill the viewport.
+  // Mirror window.innerHeight into a CSS variable for fullscreen mode
+  // — iOS Safari's `100dvh` updates lazily after orientation change.
   useEffect(() => {
-    document.body.classList.add("is-arise-page");
+    const setVh = () => {
+      document.documentElement.style.setProperty(
+        "--arise-vh-px",
+        `${window.innerHeight}px`
+      );
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    window.addEventListener("orientationchange", setVh);
     return () => {
-      document.body.classList.remove("is-arise-page");
+      window.removeEventListener("resize", setVh);
+      window.removeEventListener("orientationchange", setVh);
     };
   }, []);
 
-  // iOS Safari does not always update `100dvh` immediately after an
-  // orientation change. Two things to fix:
-  //   1. Mirror window.innerHeight into a CSS custom property so the
-  //      game frame can snap to the real viewport height the instant the
-  //      orientation event fires (no need for the user to scroll first).
-  //   2. Detect mobile-landscape ourselves in JS and toggle a body class.
-  //      The previous CSS @media query approach was brittle — some
-  //      Android phones in landscape have height > 600px so the rule
-  //      didn't fire at all, leaving nav/footer visible.
+  // Body class drives the CSS that hides nav/footer/leaderboard while
+  // in fullscreen. Also tries the real Fullscreen API where supported
+  // (Chrome/Android/desktop). iOS Safari doesn't expose it, so the CSS
+  // fallback covers that case.
   useEffect(() => {
-    const update = () => {
-      const vh = window.innerHeight;
-      const vw = window.innerWidth;
-      document.documentElement.style.setProperty("--arise-vh-px", `${vh}px`);
-      // Treat as fullscreen-capable any time we're in landscape on a
-      // viewport that's not desktop-sized (vw <= 1024). The vh < vw check
-      // is a robust orientation proxy that doesn't depend on CSS media
-      // matchers iOS sometimes lies about.
-      const isLandscape = vw > vh;
-      const isPhone = vh < 600 || vw < 1024;
-      const fullscreen = isLandscape && isPhone;
-      document.body.classList.toggle("is-arise-fullscreen", fullscreen);
-    };
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("orientationchange", update);
+    if (isFullscreen) {
+      document.body.classList.add("is-arise-fullscreen");
+      const el = document.documentElement;
+      const req =
+        el.requestFullscreen ||
+        (el as unknown as { webkitRequestFullscreen?: () => Promise<void> })
+          .webkitRequestFullscreen;
+      if (req) {
+        try {
+          req.call(el)?.catch(() => {});
+        } catch {}
+      }
+    } else {
+      document.body.classList.remove("is-arise-fullscreen");
+      const exit =
+        document.exitFullscreen ||
+        (document as unknown as { webkitExitFullscreen?: () => Promise<void> })
+          .webkitExitFullscreen;
+      if (exit && document.fullscreenElement) {
+        try {
+          exit.call(document)?.catch(() => {});
+        } catch {}
+      }
+    }
     return () => {
       document.body.classList.remove("is-arise-fullscreen");
-      window.removeEventListener("resize", update);
-      window.removeEventListener("orientationchange", update);
     };
+  }, [isFullscreen]);
+
+  // If the user exits fullscreen via Esc / system gesture, sync state.
+  useEffect(() => {
+    const onChange = () => {
+      if (!document.fullscreenElement) setIsFullscreen(false);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
 
   // ============================================================
@@ -392,30 +412,6 @@ export default function ArisGame() {
 
   // Detect portrait orientation on small screens — the game is 16:9 and
   // cramming it into portrait leaves Chikun tiny. Show a rotate-device prompt
-  // and auto-pause a run in progress so deaths don't pile up invisibly.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const check = () => {
-      // Phones only — iPads (>=700 portrait) still have enough room to show a
-      // letterboxed landscape canvas without asking the user to rotate.
-      const isSmall = window.innerWidth < 700;
-      const isPortrait = window.innerHeight > window.innerWidth;
-      setPortraitBlocked(isSmall && isPortrait);
-    };
-    check();
-    window.addEventListener("resize", check);
-    window.addEventListener("orientationchange", check);
-    return () => {
-      window.removeEventListener("resize", check);
-      window.removeEventListener("orientationchange", check);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (portraitBlocked && stateRef.current === "playing") {
-      setPaused(true);
-    }
-  }, [portraitBlocked]);
 
   // ============================================================
   // SPRITE SKIN HELPERS
@@ -711,16 +707,18 @@ export default function ArisGame() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Cap DPR on phones — a 3x retina canvas is 4K (3840x2160) of pixels
-    // for the same logical 1280x720, and mobile GPUs choke on it. Keep
-    // desktop crisp at native DPR; throttle mobile to 1.5 max which is
-    // the inflection point where text/sprites still look sharp but the
-    // pixel count drops by 75% vs native 3x.
+    // Cap DPR aggressively on touch devices. A 3× retina canvas at
+    // 1280×720 logical = 3840×2160 of pixels (4K) per frame — mobile
+    // GPUs choke on this and the canvas-blit cost drags down rAF
+    // intervals so much the game appears to run in slow-motion. Capping
+    // at 1 drops pixel count by 89% with negligible visual cost on a
+    // small screen. Desktop keeps native DPR for crisp rendering.
     const isMobile =
       typeof window !== "undefined" &&
-      window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+      (window.matchMedia("(hover: none)").matches ||
+        window.innerWidth < 900);
     const rawDpr = window.devicePixelRatio || 1;
-    const dpr = isMobile ? Math.min(rawDpr, 1.5) : rawDpr;
+    const dpr = isMobile ? 1 : rawDpr;
     canvas.width = CFG.canvas.w * dpr;
     canvas.height = CFG.canvas.h * dpr;
 
@@ -735,15 +733,15 @@ export default function ArisGame() {
     // threshold) which broke a previous attempt at this loop.
     const TARGET_FRAME = 1000 / 60;       // 16.667 ms tuned tick
     const TOLERANCE = 0.5;                // ms — covers rAF jitter
-    const MAX_FRAME_DT = 100;             // bail out on tab backgrounding
+    const MAX_FRAME_DT = 250;             // bail out on tab backgrounding
+    const MAX_PENDING = 500;              // avoid death-spiral on slow devices
     let lastTime = performance.now();
     let pending = 0;
     const tick = (now: number) => {
       const dt = Math.min(MAX_FRAME_DT, now - lastTime);
       lastTime = now;
       pending += dt;
-      // Avoid death-spiral if device is so slow it can't catch up.
-      if (pending > 200) pending = 200;
+      if (pending > MAX_PENDING) pending = MAX_PENDING;
       while (pending + TOLERANCE >= TARGET_FRAME) {
         updateRef.current(TARGET_FRAME, now);
         pending -= TARGET_FRAME;
@@ -762,7 +760,7 @@ export default function ArisGame() {
   // UPDATE
   // ============================================================
   const update = (dt: number, now: number) => {
-    if (paused || portraitBlocked) return;
+    if (paused) return;
     const state = stateRef.current;
 
     // Decay juice state every frame regardless of freeze
@@ -2371,43 +2369,6 @@ export default function ArisGame() {
 
   return (
     <div className="relative mx-auto flex w-full flex-col items-center select-none">
-      {/* Mobile-landscape fullscreen exit. CSS in globals.css flips it from
-          hidden → inline-flex inside the (max-height: 500px) and
-          (orientation: landscape) @media so it only appears when nav/footer
-          are hidden and the user has no other way back. */}
-      <Link
-        href="/"
-        aria-label="Exit game"
-        className="arise-fullscreen-exit hidden fixed z-[60] items-center justify-center w-11 h-11 rounded-full bg-black/70 border-2 border-white/20 text-white font-black text-lg hover:bg-black"
-        style={{
-          top: "max(8px, env(safe-area-inset-top))",
-          right: "max(8px, env(safe-area-inset-right))",
-        }}
-      >
-        ✕
-      </Link>
-      {portraitBlocked && (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 text-center"
-          style={{ background: "#0a0d12" }}
-        >
-          <div className="arise-rotate-icon mb-6">
-            <div className="relative w-14 h-24 border-[3px] border-white rounded-lg">
-              <div className="absolute top-1 left-1/2 -translate-x-1/2 w-6 h-1 bg-white/40 rounded" />
-              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 border-2 border-white/40 rounded-full" />
-            </div>
-          </div>
-          <div className="text-white font-black text-xl sm:text-2xl tracking-[0.2em] mb-2">
-            ROTATE YOUR DEVICE
-          </div>
-          <div className="text-[#2dff5c] font-black text-[11px] tracking-[0.35em] mb-6">
-            CHIKUN&apos;S ESCAPE IS BEST FLOWN IN LANDSCAPE
-          </div>
-          <div className="text-white/50 font-black text-[10px] tracking-[0.3em] max-w-[260px] leading-relaxed">
-            TURN YOUR PHONE SIDEWAYS TO RECLAIM THE SKY
-          </div>
-        </div>
-      )}
       <div
         className="ariseFrame relative overflow-hidden border-[3px] border-black rounded-[14px] sm:rounded-[20px] shadow-[4px_4px_0_0_#000] sm:shadow-[8px_8px_0_0_#000]"
         style={{
@@ -2468,6 +2429,18 @@ export default function ArisGame() {
             aria-label="Settings"
           >
             ⚙
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFullscreen((f) => !f);
+            }}
+            className="w-11 h-11 rounded-full bg-black/70 hover:bg-black text-white text-base font-black flex items-center justify-center border-2 border-white/20"
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? "⤡" : "⛶"}
           </button>
         </div>
 
