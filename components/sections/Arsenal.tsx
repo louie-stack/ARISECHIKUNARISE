@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ChevronLeft, ChevronRight, Upload, X } from "lucide-react";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
 
-type ArsenalType = "classic" | "culture" | "fiction" | "pfp";
+type ArsenalType = "meme" | "fiction" | "pfp";
 
 type ArsenalItem = {
   id: string;
@@ -23,8 +23,8 @@ type ArsenalItem = {
 // Arsenal-category items ship with a lightweight WebP for display and a
 // full-resolution PNG sibling for downloads (so users get a usable file,
 // not a 560px carousel thumbnail). This derives the download URL from the
-// display URL. Classics/Culture Jammin' items don't have a separate master,
-// so they just download at display resolution.
+// display URL. Meme items don't have a separate master, so they just
+// download at display resolution.
 function getDownloadSrc(item: ArsenalItem): string {
   if (item.src.startsWith("/art/arsenal/") && item.src.endsWith(".webp")) {
     return item.src.replace(/\.webp$/, ".png");
@@ -33,29 +33,29 @@ function getDownloadSrc(item: ArsenalItem): string {
 }
 
 // Seeded from existing site assets. Swap paths / add entries as new arsenal
-// art lands. Classics + Culture Jammin' are placeholder slots for now —
-// flip `placeholder` off and set `src` to a real asset as each one arrives.
+// art lands. Memes are placeholder slots for now — flip `placeholder` off
+// and set `src` to a real asset as each one arrives.
 const ITEMS: ArsenalItem[] = [
-  { id: "classic-01", src: "", type: "classic", format: "CLASSIC", title: "Classic 01", placeholder: true },
-  { id: "classic-02", src: "", type: "classic", format: "CLASSIC", title: "Classic 02", placeholder: true },
-  { id: "classic-03", src: "", type: "classic", format: "CLASSIC", title: "Classic 03", placeholder: true },
-  { id: "classic-04", src: "", type: "classic", format: "CLASSIC", title: "Classic 04", placeholder: true },
-  { id: "classic-05", src: "", type: "classic", format: "CLASSIC", title: "Classic 05", placeholder: true },
-  { id: "classic-06", src: "", type: "classic", format: "CLASSIC", title: "Classic 06", placeholder: true },
-  { id: "classic-07", src: "", type: "classic", format: "CLASSIC", title: "Classic 07", placeholder: true },
-  { id: "classic-08", src: "", type: "classic", format: "CLASSIC", title: "Classic 08", placeholder: true },
-  { id: "classic-09", src: "", type: "classic", format: "CLASSIC", title: "Classic 09", placeholder: true },
-  { id: "classic-10", src: "", type: "classic", format: "CLASSIC", title: "Classic 10", placeholder: true },
-  { id: "culture-01", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 01", placeholder: true },
-  { id: "culture-02", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 02", placeholder: true },
-  { id: "culture-03", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 03", placeholder: true },
-  { id: "culture-04", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 04", placeholder: true },
-  { id: "culture-05", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 05", placeholder: true },
-  { id: "culture-06", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 06", placeholder: true },
-  { id: "culture-07", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 07", placeholder: true },
-  { id: "culture-08", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 08", placeholder: true },
-  { id: "culture-09", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 09", placeholder: true },
-  { id: "culture-10", src: "", type: "culture", format: "CULTURE JAMMIN'", title: "Culture Jammin' 10", placeholder: true },
+  { id: "meme-01", src: "", type: "meme", format: "MEME", title: "Meme 01", placeholder: true },
+  { id: "meme-02", src: "", type: "meme", format: "MEME", title: "Meme 02", placeholder: true },
+  { id: "meme-03", src: "", type: "meme", format: "MEME", title: "Meme 03", placeholder: true },
+  { id: "meme-04", src: "", type: "meme", format: "MEME", title: "Meme 04", placeholder: true },
+  { id: "meme-05", src: "", type: "meme", format: "MEME", title: "Meme 05", placeholder: true },
+  { id: "meme-06", src: "", type: "meme", format: "MEME", title: "Meme 06", placeholder: true },
+  { id: "meme-07", src: "", type: "meme", format: "MEME", title: "Meme 07", placeholder: true },
+  { id: "meme-08", src: "", type: "meme", format: "MEME", title: "Meme 08", placeholder: true },
+  { id: "meme-09", src: "", type: "meme", format: "MEME", title: "Meme 09", placeholder: true },
+  { id: "meme-10", src: "", type: "meme", format: "MEME", title: "Meme 10", placeholder: true },
+  { id: "meme-11", src: "", type: "meme", format: "MEME", title: "Meme 11", placeholder: true },
+  { id: "meme-12", src: "", type: "meme", format: "MEME", title: "Meme 12", placeholder: true },
+  { id: "meme-13", src: "", type: "meme", format: "MEME", title: "Meme 13", placeholder: true },
+  { id: "meme-14", src: "", type: "meme", format: "MEME", title: "Meme 14", placeholder: true },
+  { id: "meme-15", src: "", type: "meme", format: "MEME", title: "Meme 15", placeholder: true },
+  { id: "meme-16", src: "", type: "meme", format: "MEME", title: "Meme 16", placeholder: true },
+  { id: "meme-17", src: "", type: "meme", format: "MEME", title: "Meme 17", placeholder: true },
+  { id: "meme-18", src: "", type: "meme", format: "MEME", title: "Meme 18", placeholder: true },
+  { id: "meme-19", src: "", type: "meme", format: "MEME", title: "Meme 19", placeholder: true },
+  { id: "meme-20", src: "", type: "meme", format: "MEME", title: "Meme 20", placeholder: true },
   { id: "fiction-01", src: "/art/arsenal/fiction-01.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 01" },
   { id: "fiction-02", src: "/art/arsenal/fiction-02.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 02" },
   { id: "fiction-03", src: "/art/arsenal/fiction-03.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 03" },
@@ -81,8 +81,7 @@ const ITEMS: ArsenalItem[] = [
 ];
 
 const FILTERS = [
-  { key: "classic", label: "CLASSICS" },
-  { key: "culture", label: "CULTURE JAMMIN'" },
+  { key: "meme", label: "MEMES" },
   { key: "fiction", label: "FAN FICTION" },
   { key: "pfp", label: "PFPS" }
 ] as const;
@@ -93,7 +92,7 @@ export default function Arsenal() {
   const headingRef = useRef<HTMLDivElement>(null);
   const headingState = useRevealOnScroll(headingRef);
 
-  const [filter, setFilter] = useState<FilterKey>("classic");
+  const [filter, setFilter] = useState<FilterKey>("meme");
   const [showSubmit, setShowSubmit] = useState(false);
 
   const tiles = ITEMS.filter((i) => i.type === filter);
@@ -371,7 +370,7 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<ArsenalType>("classic");
+  const [category, setCategory] = useState<ArsenalType>("meme");
   const [handle, setHandle] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
