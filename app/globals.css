@@ -104,6 +104,17 @@ body {
   text-transform: uppercase;
   filter: drop-shadow(0 0 1px rgba(46, 232, 98, 0.4));
 }
+/* Mobile-only fallback: when Permanent Marker fails to load (slow
+   networks), the default `cursive` fallback resolves to Snell Roundhand
+   on iOS — a thin script that looks broken. Override with a bold sans
+   that's already loaded so the worst-case mobile render is "thick green
+   word" instead of "ugly cursive". Desktop is untouched. */
+@media (max-width: 767px) {
+  .spray-tag {
+    font-family: "Permanent Marker", "Hanken Grotesk", system-ui, sans-serif;
+    font-weight: 900;
+  }
+}
 
 .spray-tag::after {
   content: "";
@@ -420,26 +431,28 @@ body {
 }
 
 /* Mobile landscape: hide the nav + footer so the game truly fills the
-   screen. body:has() lets the game page reach up and disable site chrome
-   without coupling React components together. Strip the section's
-   padding-top/left/right so the canvas extends to all four edges, and
-   drop the frame's border/shadow that would otherwise show as a ring. */
+   screen. The .is-arise-page body class is set by ArisGame.tsx on mount.
+   We use a body class (not :has) for universal mobile-browser support. */
 @media (max-height: 500px) and (orientation: landscape) {
-  body:has(.arise-page) > header,
-  body:has(.arise-page) > footer {
+  body.is-arise-page > header,
+  body.is-arise-page > footer {
     display: none !important;
   }
-  .arise-page {
+  body.is-arise-page .arise-page {
     padding: 0 !important;
     padding-top: 0 !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
     min-height: 100dvh;
   }
-  .ariseFrame {
+  body.is-arise-page .ariseFrame {
     --arise-vh: 100dvh;
     border-width: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+  }
+  /* Show the floating exit button in fullscreen mode only. */
+  .arise-fullscreen-exit {
+    display: inline-flex !important;
   }
 }
 /* Tablet/wider mobile in landscape — close to fullscreen but keep the

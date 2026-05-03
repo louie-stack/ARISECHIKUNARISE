@@ -16,6 +16,7 @@ export default function HomePage() {
       <Marquee
         variant="mint"
         items={["POWERED BY LITECOIN", "BUILT ON LITVM"]}
+        speed="fast"
         showSeparators={false}
       />
 

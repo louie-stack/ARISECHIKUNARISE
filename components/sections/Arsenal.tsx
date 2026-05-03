@@ -185,7 +185,7 @@ function TileCard({ item }: { item: ArsenalItem }) {
     return (
       <article
         aria-label={`${item.format} — placeholder slot`}
-        className="relative aspect-square rounded-md overflow-hidden border-2 border-dashed border-bone/20 bg-ink-soft/40 flex flex-col items-center justify-center gap-2 p-3 select-none"
+        className="relative aspect-[3/4] md:aspect-square rounded-md overflow-hidden border-2 border-dashed border-bone/20 bg-ink-soft/40 flex flex-col items-center justify-center gap-2 p-3 select-none"
       >
         <span className="font-black text-bone/40 tracking-[0.3em] text-[0.55rem] md:text-[0.6rem] text-center">
           {item.format}
@@ -198,7 +198,7 @@ function TileCard({ item }: { item: ArsenalItem }) {
   }
 
   return (
-    <article className="relative aspect-square group rounded-md overflow-hidden border-2 border-bone/10 bg-gradient-to-br from-ink to-ink-soft transition-colors hover:border-glow">
+    <article className="relative aspect-[3/4] md:aspect-square group rounded-md overflow-hidden border-2 border-bone/10 bg-gradient-to-br from-ink to-ink-soft transition-colors hover:border-glow">
       {/* Dark-gradient placeholder visible until the real image loads. */}
       <div
         aria-hidden

@@ -155,11 +155,12 @@ export default function Strongholds() {
       ref={sectionRef}
       className="relative bg-blue text-bone py-16 md:py-24 overflow-hidden"
     >
-      {/* Floating corner stamps — mew-style decoration */}
-      <div className="absolute top-6 left-4 md:left-8 z-20 pointer-events-none">
+      {/* Floating corner stamps — mew-style decoration. Hidden on mobile
+          because at narrow widths they crowd the headline. */}
+      <div className="hidden md:block absolute top-6 left-4 md:left-8 z-20 pointer-events-none">
         <span className="tape tape-mint">FIELD REPORT · 001</span>
       </div>
-      <div className="absolute top-6 right-4 md:right-8 z-20 pointer-events-none">
+      <div className="hidden md:block absolute top-6 right-4 md:right-8 z-20 pointer-events-none">
         <span className="tape tape-blood">CLASSIFIED</span>
       </div>
 

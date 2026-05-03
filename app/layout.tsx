@@ -31,6 +31,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Preconnect to Google Fonts so the @import in globals.css resolves
+            faster on mobile networks (where it was sometimes timing out and
+            falling back to the OS cursive). Desktop already loads fast so
+            this is a no-op there. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         {/* Preload the hero WebP so the homepage paints with the image
             already in cache — eliminates the progressive-paint feel on
             slow connections. Next 14 hoists this into <head>. */}

@@ -64,6 +64,7 @@ import {
   SPRITE_SRCS,
   type SpriteSource,
 } from "./game/sprites";
+import Link from "next/link";
 
 // ============================================================
 // TYPES
@@ -288,6 +289,17 @@ export default function ArisGame() {
     { submitted: boolean; rank: number | null } | null
   >(null);
   const [portraitBlocked, setPortraitBlocked] = useState(false);
+
+  // Tag <body> while the arise page is mounted. Replaces the body:has()
+  // CSS selector (spotty support on older mobile browsers) — globals.css
+  // uses .is-arise-page to hide the site nav/footer in landscape so the
+  // canvas can fill the viewport.
+  useEffect(() => {
+    document.body.classList.add("is-arise-page");
+    return () => {
+      document.body.classList.remove("is-arise-page");
+    };
+  }, []);
 
   // ============================================================
   // LIFECYCLE — asset load, save load
@@ -2313,6 +2325,21 @@ export default function ArisGame() {
 
   return (
     <div className="relative mx-auto flex w-full flex-col items-center select-none">
+      {/* Mobile-landscape fullscreen exit. CSS in globals.css flips it from
+          hidden → inline-flex inside the (max-height: 500px) and
+          (orientation: landscape) @media so it only appears when nav/footer
+          are hidden and the user has no other way back. */}
+      <Link
+        href="/"
+        aria-label="Exit game"
+        className="arise-fullscreen-exit hidden fixed z-[60] items-center justify-center w-11 h-11 rounded-full bg-black/70 border-2 border-white/20 text-white font-black text-lg hover:bg-black"
+        style={{
+          top: "max(8px, env(safe-area-inset-top))",
+          right: "max(8px, env(safe-area-inset-right))",
+        }}
+      >
+        ✕
+      </Link>
       {portraitBlocked && (
         <div
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 text-center"
