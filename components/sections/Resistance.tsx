@@ -113,7 +113,8 @@ export default function Resistance() {
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display =
                       "none";
-                    if (typeof window !== "undefined") {
+                    if (process.env.NODE_ENV !== "production") {
+                      // eslint-disable-next-line no-console
                       console.warn(
                         `[Resistance] Missing image: /art/resistance/${c.key}.webp`
                       );

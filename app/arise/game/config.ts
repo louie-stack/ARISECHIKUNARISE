@@ -366,7 +366,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "first_flap", name: "First Flap", description: "Start your first run.", check: (c) => c.lifetimeRuns >= 1 },
   { id: "ten_towers", name: "Getting The Hang", description: "Pass 10 towers in a run.", check: (c) => c.runTowers >= 10 },
   { id: "twentyfive", name: "Escape The Yard", description: "Reach Corporate Heights.", check: (c) => c.zonesReached >= 2 },
-  { id: "fifty", name: "Pierce The Spire", description: "Reach The Spire.", check: (c) => c.zonesReached >= 3 },
+  { id: "fifty", name: "Blue Hour", description: "Reach Blue Hour.", check: (c) => c.zonesReached >= 3 },
   { id: "seventyfive", name: "High Altitude", description: "Reach the final zone.", check: (c) => c.zonesReached >= 4 },
   { id: "hundred", name: "Century Chikun", description: "Score 100 in one run.", check: (c) => c.runScore >= 100 },
   { id: "ascetic", name: "Ascetic Bird", description: "Pass 15 towers without collecting a coin.", check: (c) => c.runTowers >= 15 && c.runNoCoins },
@@ -378,7 +378,7 @@ export const ACHIEVEMENTS: Achievement[] = [
 // ============================================================
 // NARRATIVE FLAVOR
 // ============================================================
-export const HEADLINES: string[] = ["DEFEAT THE GLOBAL ELITES"];
+export const HEADLINES: string[] = ["DEFEAT THE GLOBAL ELITE"];
 
 export const VILLAIN_TAUNTS: string[] = [
   "You've dishonoured SatoshiLite.",
@@ -387,9 +387,9 @@ export const VILLAIN_TAUNTS: string[] = [
 ];
 
 export const VIGNETTES: string[] = [
-  "A feather drifts past a BigCorp window. Someone closes the blinds.",
+  "A feather drifts past a Big Corp window. Someone closes the blinds.",
   "Somewhere below, a chikun reads the gravity law out loud and laughs.",
-  "The Elite holds a meeting about the draft. They adjust their ties.",
+  "The Elite hold a meeting about the draft. They adjust their ties.",
   "LitVM hums in a basement. It is not worried.",
   "A sign reads 'NO FLIGHT ZONE'. A feather lands on it.",
   "Children point at the sky. They are told not to.",

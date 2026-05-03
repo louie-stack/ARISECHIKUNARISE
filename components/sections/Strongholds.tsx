@@ -53,7 +53,7 @@ const LORE_BODY: Seg[][] = [
     { text: "> ", className: "text-glow" },
     { text: "Yet the darkest hours led to the brightest dawns. Some key pockets of " },
     { text: "resistance", className: "text-glow" },
-    { text: " remained against this tyranny and now their determination and courage have sprouted a new hope. " },
+    { text: " remained against this tyranny. Now their determination and courage have sprouted a new hope. " },
     { text: "LitVM", className: "text-glow" },
     {
       text: " has arrived! Bringing EVM capabilities to our beloved Litecoin. We must capture this moment and rally together."

@@ -159,7 +159,7 @@ export default function AriseShowcase() {
           >
             FREE CHIKUN FROM
             <br />
-            <span className="text-[#ff3037]">THE ELITES</span>
+            <span className="text-[#ff3037]">THE ELITE</span>
           </h3>
           <p className="prose-normal mt-5 text-base md:text-lg text-bone/75 max-w-md">
             Fly the city. Outrun The Elite. Write your name in silver.
@@ -342,8 +342,8 @@ export default function AriseShowcase() {
           <div className="mt-2">
             <p className="font-bold tracking-tight text-lg leading-none mt-2">LEADERBOARD</p>
             <p className="prose-normal text-sm text-bone/70 mt-1">
-              Make your mark in the global rankings, every new high score
-              reached updates your entry.
+              Make your mark in the global rankings. Every new high score
+              updates your entry.
             </p>
           </div>
         </Link>

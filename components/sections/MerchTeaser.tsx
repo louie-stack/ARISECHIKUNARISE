@@ -28,10 +28,12 @@ export default function MerchTeaser() {
     e.preventDefault();
     const trimmed = email.trim();
     if (!trimmed) return;
-    // No backend yet — capture locally. Swap this to an email capture
-    // endpoint (MailerLite, Beehiiv, custom) when one is ready.
-    // eslint-disable-next-line no-console
-    console.log("[merch:notify]", trimmed);
+    // No backend yet — capture locally (dev only). Swap this to an email
+    // capture endpoint (MailerLite, Beehiiv, custom) when one is ready.
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.log("[merch:notify]", trimmed);
+    }
     setSubmitted(true);
   };
 
@@ -80,7 +82,7 @@ export default function MerchTeaser() {
               </h2>
 
               <p className="prose-normal mt-6 text-base md:text-lg text-bone/80 max-w-md">
-                Merch store coming soon ...
+                Merch store coming soon.
               </p>
 
               {/* CTA — either a button that expands the email form, or the

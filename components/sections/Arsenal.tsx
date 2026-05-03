@@ -406,16 +406,18 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    // No backend yet — log locally and swap to the success state. Wire this up
-    // to a real endpoint when one exists.
-    // eslint-disable-next-line no-console
-    console.log("[meme-vault:submit]", {
-      fileName: file?.name,
-      fileSize: file?.size,
-      title: title.trim(),
-      category,
-      handle: handle.trim(),
-    });
+    // No backend yet — log locally (dev only) and swap to the success state.
+    // Wire this up to a real endpoint when one exists.
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.log("[meme-vault:submit]", {
+        fileName: file?.name,
+        fileSize: file?.size,
+        title: title.trim(),
+        category,
+        handle: handle.trim(),
+      });
+    }
     setSubmitted(true);
   };
 

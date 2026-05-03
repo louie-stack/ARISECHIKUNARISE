@@ -1866,7 +1866,7 @@ export default function ArisGame() {
     ctx.fillText("⚠ INCOMING ⚠", w / 2, h / 2 - 40);
     ctx.font = "900 24px system-ui, -apple-system, sans-serif";
     ctx.fillStyle = "#fff";
-    const label = b.kind === "heli" ? "BIGCORP HELICOPTER" : b.kind === "swarm" ? "DRONE SWARM" : "THE CEO";
+    const label = b.kind === "heli" ? "BIG CORP HELICOPTER" : b.kind === "swarm" ? "DRONE SWARM" : "THE CEO";
     ctx.fillText(label, w / 2, h / 2 + 30);
     ctx.shadowBlur = 0;
     ctx.restore();
