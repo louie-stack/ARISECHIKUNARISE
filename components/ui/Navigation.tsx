@@ -18,11 +18,15 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/terms", label: "T&Cs" }
 ];
 
-const ECOSYSTEM = [
-  { label: "LitVM", href: "#" },
-  { label: "Litecoin.com", href: "https://litecoin.com" },
-  { label: "CoinGecko", href: "#" },
-  { label: "CoinMarketCap", href: "#" }
+type EcoItem = {
+  label: string;
+  href: string;
+  comingSoon?: boolean;
+};
+
+const ECOSYSTEM: EcoItem[] = [
+  { label: "X", href: "https://x.com/ChikunLTC" },
+  { label: "Telegram", href: "#", comingSoon: true }
 ];
 
 export default function Navigation() {
@@ -72,16 +76,33 @@ export default function Navigation() {
             {ecoOpen && (
               <div className="absolute top-full right-0 pt-2 w-56">
                 <ul className="bg-bone border-2 border-ink rounded-2xl shadow-[4px_4px_0_#0A0A0F] p-2 space-y-1">
-                  {ECOSYSTEM.map((item) => (
-                    <li key={item.label}>
-                      <a
-                        href={item.href}
-                        className="block px-3 py-2 text-sm font-bold text-ink rounded-lg hover:bg-mint transition-colors"
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  ))}
+                  {ECOSYSTEM.map((item) =>
+                    item.comingSoon ? (
+                      <li key={item.label}>
+                        <span
+                          aria-disabled="true"
+                          title={`${item.label} — coming soon`}
+                          className="flex items-center justify-between px-3 py-2 text-sm font-bold text-ink/40 rounded-lg cursor-not-allowed select-none"
+                        >
+                          <span>{item.label}</span>
+                          <span className="text-[10px] tracking-[0.2em] font-black text-ink/50">
+                            SOON
+                          </span>
+                        </span>
+                      </li>
+                    ) : (
+                      <li key={item.label}>
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-3 py-2 text-sm font-bold text-ink rounded-lg hover:bg-mint transition-colors"
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             )}
@@ -139,15 +160,28 @@ export default function Navigation() {
               ECOSYSTEM
             </p>
             <div className="flex flex-wrap gap-3">
-              {ECOSYSTEM.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="btn-pill"
-                >
-                  {item.label}
-                </a>
-              ))}
+              {ECOSYSTEM.map((item) =>
+                item.comingSoon ? (
+                  <span
+                    key={item.label}
+                    aria-disabled="true"
+                    title={`${item.label} — coming soon`}
+                    className="btn-pill opacity-50 cursor-not-allowed select-none"
+                  >
+                    {item.label} — Soon
+                  </span>
+                ) : (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-pill"
+                  >
+                    {item.label}
+                  </a>
+                )
+              )}
             </div>
           </div>
         </div>
