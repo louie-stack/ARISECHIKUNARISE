@@ -103,7 +103,7 @@ export default function NewEra() {
           <div className="mt-12 grid grid-cols-3 gap-6 md:gap-10 items-start">
             <div>
               <p className="font-black text-xs md:text-sm tracking-[0.3em] mb-4">
-                BURNED
+                AIRDROP
               </p>
               <p
                 className="font-black leading-none stat-value"
@@ -114,7 +114,7 @@ export default function NewEra() {
             </div>
             <div>
               <p className="font-black text-xs md:text-sm tracking-[0.3em] mb-4">
-                BELIEVERS
+                METHOD
               </p>
               <p
                 className="font-black leading-none stat-value"
