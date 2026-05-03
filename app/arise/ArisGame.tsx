@@ -760,13 +760,18 @@ export default function ArisGame() {
     if (paused) return;
     const state = stateRef.current;
 
-    // Frame-rate-independence factor. Game tuning was authored at 60Hz —
-    // 1.0 frameScale at 60fps means per-frame physics behave exactly as
-    // before (desktop unchanged). At 30fps mobile, frameScale = 2.0 so
-    // each update step covers twice the distance, giving the same speed
-    // per real second. Only applied to per-frame movement; dt-based code
-    // (popup.life, cloud drift, etc) is already correct.
-    const frameScale = dt / (1000 / 60);
+    // Frame-rate compensation factor. CRUCIAL: clamped at minimum 1.0 so
+    // high-refresh-rate desktops (120/144Hz) keep their original behavior
+    // — pre-fix the game ran at fps × 1 update per second (so 144 ups on
+    // a 144Hz display, "overspeed" relative to 60Hz tuning, but that's
+    // what the desktop experience was tuned to feel like). Without the
+    // Math.max clamp, frameScale would be 0.42 at 144Hz and slow desktop
+    // gameplay 2.4× — which is exactly the regression the user kept
+    // hitting. With clamp:
+    //   60+ Hz: frameScale = 1.0, physics × 1, identical to original
+    //   30 Hz mobile: frameScale = 2.0, physics × 2, matches 60Hz speed
+    //   45 Hz mid-range: frameScale = 1.33, scaled accordingly
+    const frameScale = Math.max(1, dt / (1000 / 60));
 
     // Decay juice state every frame regardless of freeze
     flapScaleTRef.current = Math.max(
