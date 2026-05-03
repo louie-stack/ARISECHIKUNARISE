@@ -302,23 +302,35 @@ export default function ArisGame() {
   }, []);
 
   // iOS Safari does not always update `100dvh` immediately after an
-  // orientation change — the viewport stays at the pre-rotation size
-  // until the user scrolls. Mirror window.innerHeight into a CSS custom
-  // property so the game frame can snap to the real viewport height the
-  // moment the rotation event fires.
+  // orientation change. Two things to fix:
+  //   1. Mirror window.innerHeight into a CSS custom property so the
+  //      game frame can snap to the real viewport height the instant the
+  //      orientation event fires (no need for the user to scroll first).
+  //   2. Detect mobile-landscape ourselves in JS and toggle a body class.
+  //      The previous CSS @media query approach was brittle — some
+  //      Android phones in landscape have height > 600px so the rule
+  //      didn't fire at all, leaving nav/footer visible.
   useEffect(() => {
-    const setVh = () => {
-      document.documentElement.style.setProperty(
-        "--arise-vh-px",
-        `${window.innerHeight}px`
-      );
+    const update = () => {
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+      document.documentElement.style.setProperty("--arise-vh-px", `${vh}px`);
+      // Treat as fullscreen-capable any time we're in landscape on a
+      // viewport that's not desktop-sized (vw <= 1024). The vh < vw check
+      // is a robust orientation proxy that doesn't depend on CSS media
+      // matchers iOS sometimes lies about.
+      const isLandscape = vw > vh;
+      const isPhone = vh < 600 || vw < 1024;
+      const fullscreen = isLandscape && isPhone;
+      document.body.classList.toggle("is-arise-fullscreen", fullscreen);
     };
-    setVh();
-    window.addEventListener("resize", setVh);
-    window.addEventListener("orientationchange", setVh);
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
     return () => {
-      window.removeEventListener("resize", setVh);
-      window.removeEventListener("orientationchange", setVh);
+      document.body.classList.remove("is-arise-fullscreen");
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
     };
   }, []);
 
@@ -712,23 +724,29 @@ export default function ArisGame() {
     canvas.width = CFG.canvas.w * dpr;
     canvas.height = CFG.canvas.h * dpr;
 
-    // The game's update() applies movement per-frame without dt scaling for
-    // most physics, so on a phone at 30fps it'd run at half speed. To keep
-    // desktop identical to the original tuning while catching mobile up:
-    // every rAF, work out how many 60Hz "frames worth" of time has passed
-    // and run that many update steps. On 60Hz desktop this is always 1
-    // (identical to the original loop). On 30Hz mobile it's 2 (corrects
-    // the half-speed bug). Always at least 1 step so the game never stalls.
+    // Fixed-timestep accumulator. The game's update() applies movement
+    // per-frame without dt scaling for most physics; tuned at 60Hz. We
+    // accumulate real time and run as many fixed 16.667ms ticks as needed
+    // to keep up. This guarantees exactly 60 update calls per real second
+    // regardless of how the browser actually paces rAF — fixes the slow
+    // gameplay seen on phones running between 30-55fps under thermal /
+    // battery throttling. The +TOLERANCE handles the case where browser
+    // rAF fires at 16.5ms on a 60Hz display (precision below the strict
+    // threshold) which broke a previous attempt at this loop.
     const TARGET_FRAME = 1000 / 60;       // 16.667 ms tuned tick
-    const MAX_FRAME_DT = 100;             // bail out if tab was backgrounded
+    const TOLERANCE = 0.5;                // ms — covers rAF jitter
+    const MAX_FRAME_DT = 100;             // bail out on tab backgrounding
     let lastTime = performance.now();
+    let pending = 0;
     const tick = (now: number) => {
       const dt = Math.min(MAX_FRAME_DT, now - lastTime);
       lastTime = now;
-      const steps = Math.max(1, Math.round(dt / TARGET_FRAME));
-      const stepDt = dt / steps;
-      for (let i = 0; i < steps; i++) {
-        updateRef.current(stepDt, now);
+      pending += dt;
+      // Avoid death-spiral if device is so slow it can't catch up.
+      if (pending > 200) pending = 200;
+      while (pending + TOLERANCE >= TARGET_FRAME) {
+        updateRef.current(TARGET_FRAME, now);
+        pending -= TARGET_FRAME;
       }
       renderRef.current(ctx, dpr);
       rafRef.current = requestAnimationFrame(tick);
