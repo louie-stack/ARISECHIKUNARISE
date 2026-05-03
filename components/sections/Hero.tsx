@@ -62,7 +62,7 @@ export default function Hero() {
                   // @ts-expect-error - fetchPriority is a valid React 18.3+ HTML attribute
                   fetchpriority="high"
                   onLoad={() => setImgLoaded(true)}
-                  className={`relative z-10 h-[70svh] md:h-[90vh] max-w-full w-auto object-contain transition-opacity duration-500 ${
+                  className={`relative z-10 h-[85svh] md:h-[90vh] w-auto max-w-none md:max-w-full object-contain transition-opacity duration-500 ${
                     imgLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   style={{

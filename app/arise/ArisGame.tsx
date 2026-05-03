@@ -670,11 +670,26 @@ export default function ArisGame() {
     canvas.width = CFG.canvas.w * dpr;
     canvas.height = CFG.canvas.h * dpr;
 
+    // Fixed-timestep loop. The original update() was tuned at 60fps and
+    // applies movement per-frame without dt scaling for most physics, so on
+    // a phone running at 30 fps the game ran at half speed. We now run the
+    // update step at a fixed 60 Hz regardless of how often the browser
+    // actually animates — if a frame is slow, the accumulator catches us up
+    // with multiple update steps; if it's fast, render still runs once.
+    const FIXED_DT = 1000 / 60;          // 16.667 ms — game's tuned tick
+    const MAX_FRAME_DT = 100;            // bail out if tab was backgrounded
     let lastTime = performance.now();
+    let accumulator = 0;
     const tick = (now: number) => {
-      const dt = Math.min(33, now - lastTime);
+      const frameDt = Math.min(MAX_FRAME_DT, now - lastTime);
       lastTime = now;
-      updateRef.current(dt, now);
+      accumulator += frameDt;
+      // Cap accumulator to avoid death-spiral on really slow devices.
+      if (accumulator > 200) accumulator = 200;
+      while (accumulator >= FIXED_DT) {
+        updateRef.current(FIXED_DT, now);
+        accumulator -= FIXED_DT;
+      }
       renderRef.current(ctx, dpr);
       rafRef.current = requestAnimationFrame(tick);
     };
@@ -2352,7 +2367,7 @@ export default function ArisGame() {
               e.stopPropagation();
               toggleMute();
             }}
-            className="w-10 h-10 rounded-full bg-black/70 hover:bg-black text-white text-sm font-black flex items-center justify-center border-2 border-white/20"
+            className="w-11 h-11 rounded-full bg-black/70 hover:bg-black text-white text-sm font-black flex items-center justify-center border-2 border-white/20"
             aria-label={save?.muted ? "Unmute" : "Mute"}
           >
             {save?.muted ? "🔇" : "🔊"}
@@ -2364,7 +2379,7 @@ export default function ArisGame() {
                 e.stopPropagation();
                 setPaused((p) => !p);
               }}
-              className="w-10 h-10 rounded-full bg-black/70 hover:bg-black text-white text-sm font-black flex items-center justify-center border-2 border-white/20"
+              className="w-11 h-11 rounded-full bg-black/70 hover:bg-black text-white text-sm font-black flex items-center justify-center border-2 border-white/20"
               aria-label="Pause"
             >
               {paused ? "▶" : "❚❚"}
@@ -2376,7 +2391,7 @@ export default function ArisGame() {
               e.stopPropagation();
               setShowSettings(true);
             }}
-            className="w-10 h-10 rounded-full bg-black/70 hover:bg-black text-white text-sm font-black flex items-center justify-center border-2 border-white/20"
+            className="w-11 h-11 rounded-full bg-black/70 hover:bg-black text-white text-sm font-black flex items-center justify-center border-2 border-white/20"
             aria-label="Settings"
           >
             ⚙
@@ -2922,7 +2937,7 @@ function Modal({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 text-white font-black flex items-center justify-center hover:bg-white/20"
+            className="w-10 h-10 rounded-full bg-white/10 text-white font-black flex items-center justify-center hover:bg-white/20"
             aria-label="Close"
           >
             ✕

@@ -2,13 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts — bold chunky sans + spray-paint accent */
-@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800;900&family=Permanent+Marker&display=swap");
-
-:root {
-  --font-sans: "Hanken Grotesk", system-ui, sans-serif;
-  --font-spray: "Permanent Marker", cursive;
-}
+/* Font CSS variables (--font-sans, --font-spray) are set by next/font in
+   app/layout.tsx — see the className on <html>. Self-hosted so mobile
+   networks can't fall back to OS cursive. */
 
 * {
   -webkit-font-smoothing: antialiased;
@@ -419,14 +415,39 @@ body {
   overscroll-behavior-y: contain;
 }
 
-@media (max-width: 820px) and (orientation: landscape) {
+/* Mobile landscape: hide the nav + footer so the game truly fills the
+   screen. body:has() lets the game page reach up and disable site chrome
+   without coupling React components together. Strip the section's
+   padding-top/left/right so the canvas extends to all four edges, and
+   drop the frame's border/shadow that would otherwise show as a ring. */
+@media (max-height: 500px) and (orientation: landscape) {
+  body:has(.arise-page) > header,
+  body:has(.arise-page) > footer {
+    display: none !important;
+  }
+  .arise-page {
+    padding: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+    min-height: 100dvh;
+  }
   .ariseFrame {
-    --arise-vh: 78dvh;
+    --arise-vh: 100dvh;
+    border-width: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
+/* Tablet/wider mobile in landscape — close to fullscreen but keep the
+   nav visible because there's vertical room for it. */
+@media (min-height: 501px) and (max-width: 820px) and (orientation: landscape) {
+  .ariseFrame {
+    --arise-vh: 92dvh;
   }
 }
 @media (max-height: 420px) {
   .ariseFrame {
-    --arise-vh: 88dvh;
+    --arise-vh: 100dvh;
   }
 }
 
