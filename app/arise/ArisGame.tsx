@@ -740,7 +740,7 @@ export default function ArisGame() {
       // that prevents the boost from kicking in on devices that hit
       // 60fps. If 3× is still not fast enough, raise the constant. If
       // it's TOO fast, lower it. Easy single dial.
-      const MOBILE_BOOST = 5;
+      const MOBILE_BOOST = 4;
       tick = (now: number) => {
         const dt = Math.min(100, now - lastTime);
         lastTime = now;
