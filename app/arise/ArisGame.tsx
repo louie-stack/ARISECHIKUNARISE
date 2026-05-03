@@ -12,7 +12,7 @@
  * Save state lives in `./game/storage.ts`.
  */
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import {
   CFG,
   COLORS,
@@ -270,6 +270,7 @@ export default function ArisGame() {
   const [lastCoins, setLastCoins] = useState(0);
   const [lastTowers, setLastTowers] = useState(0);
   const [lastMaxCombo, setLastMaxCombo] = useState(0);
+  const [lastZoneIdx, setLastZoneIdx] = useState(0);
   const [displayScoreState, setDisplayScoreState] = useState(0);
   const [save, setSaveUi] = useState<SaveState | null>(null);
   const [showShop, setShowShop] = useState(false);
@@ -516,6 +517,7 @@ export default function ArisGame() {
     setLastCoins(finalCoins);
     setLastTowers(finalTowers);
     setLastMaxCombo(finalCombo);
+    setLastZoneIdx(finalZoneIdx);
     setDisplayScoreState(0);
     displayScoreRef.current = 0;
 
@@ -2191,20 +2193,49 @@ export default function ArisGame() {
     setSubmissionResult({ submitted: true, rank });
   }, [nameInput, lastScore, lastCoins, lastTowers, save]);
 
-  // Opens X's tweet intent in a new tab, prefilled with the player's score
-  // and a link back to the game. The site URL comes from window.location so
-  // it works on localhost, preview, and production without config.
+  // Build the share-tweet body. Single source of truth so the modal preview
+  // and the actual X intent stay in lockstep. Structured as a punchy headline,
+  // stat block, and a brand-voice closer; URL is appended by X via &url=.
+  const tweetText = useMemo(() => {
+    const handle = save?.playerName?.trim() || "";
+    const zoneName = ZONES[lastZoneIdx]?.name ?? "THE YARD";
+    const rank = submissionResult?.rank ?? null;
+
+    const headline = rank
+      ? `🐔 #${rank} on the global ARISE leaderboard.`
+      : handle
+        ? `🐔 ${handle} just escaped the Elite.`
+        : `🐔 Just escaped the Elite in ARISE CHIKUN.`;
+
+    const stats = [
+      `⚡ SCORE   ${lastScore}`,
+      `🪙 COINS   ${lastCoins}`,
+      `🗼 TOWERS  ${lastTowers}`,
+      lastMaxCombo >= 2 ? `🔥 COMBO   ×${lastMaxCombo}` : null,
+      `🏙 ZONE    ${zoneName}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const closer = rank
+      ? `Beat me. The Elite are watching.`
+      : `Defeat the global Elite. Or stay clipped.`;
+
+    return `${headline}\n\n${stats}\n\n${closer}`;
+  }, [lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
+
+  // Opens X's tweet intent in a new tab. Site URL comes from window.location
+  // so it works on localhost, preview, and production without config.
   const openXIntent = useCallback(() => {
     if (typeof window === "undefined") return;
     const gameUrl = `${window.location.origin}/arise`;
-    const text = `I flew ${lastScore} in ARISE CHIKUN 🐔 ${lastCoins} coins, ${lastTowers} towers. Can you beat my score?`;
     const intent =
       "https://x.com/intent/tweet" +
-      `?text=${encodeURIComponent(text)}` +
+      `?text=${encodeURIComponent(tweetText)}` +
       `&url=${encodeURIComponent(gameUrl)}` +
-      `&hashtags=${encodeURIComponent("CHIKUN,ARISE,LITVM")}`;
+      `&hashtags=${encodeURIComponent("CHIKUN,ARISE,LITECOIN")}`;
     window.open(intent, "_blank", "noopener,noreferrer");
-  }, [lastScore, lastCoins, lastTowers]);
+  }, [tweetText]);
 
   const shareRun = useCallback(async () => {
     const canvas = canvasRef.current;
@@ -2823,10 +2854,8 @@ export default function ArisGame() {
 
             {/* Tweet preview */}
             <div className="rounded-xl border-2 border-white/15 bg-black/50 p-3 mb-4 text-sm leading-snug">
-              <div className="text-white">
-                I flew <span className="font-black">{lastScore}</span> in ARISE
-                CHIKUN 🐔 {lastCoins} coins, {lastTowers} towers. Can you beat my
-                score?
+              <div className="text-white whitespace-pre-line font-medium">
+                {tweetText}
               </div>
               <div className="text-[#1d9bf0] mt-2 break-all">
                 {typeof window !== "undefined"
@@ -2834,7 +2863,7 @@ export default function ArisGame() {
                   : "/arise"}
               </div>
               <div className="text-white/60 text-xs mt-1">
-                #CHIKUN #ARISE #LITVM
+                #CHIKUN #ARISE #LITECOIN
               </div>
             </div>
 
