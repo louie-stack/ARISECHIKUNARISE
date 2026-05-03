@@ -14,7 +14,6 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/arise", label: "Arcade" },
-  { href: "/memes", label: "Meme Vault" },
   { href: "/merch", label: "Merch Store", comingSoon: true },
   { href: "/terms", label: "T&Cs" }
 ];

@@ -59,7 +59,6 @@ If your filenames differ, update the references in:
 - `components/sections/ChikunTales.tsx`
 - `components/sections/Media.tsx`
 - `components/sections/MerchTeaser.tsx`
-- `app/memes/page.tsx`
 
 ## Palette
 
