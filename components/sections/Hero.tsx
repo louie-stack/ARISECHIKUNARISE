@@ -30,7 +30,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-blue text-bone overflow-hidden min-h-screen flex flex-col"
+      className="relative bg-blue text-bone overflow-hidden min-h-[100svh] md:min-h-screen flex flex-col"
     >
       <h1 className="sr-only">CHIKUN</h1>
       {/* Plain blue section with the hero banner centred. bg matches the
@@ -62,7 +62,7 @@ export default function Hero() {
                   // @ts-expect-error - fetchPriority is a valid React 18.3+ HTML attribute
                   fetchpriority="high"
                   onLoad={() => setImgLoaded(true)}
-                  className={`relative z-10 h-[75vh] md:h-[90vh] max-w-full w-auto object-contain transition-opacity duration-500 ${
+                  className={`relative z-10 h-[70svh] md:h-[90vh] max-w-full w-auto object-contain transition-opacity duration-500 ${
                     imgLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   style={{
@@ -101,14 +101,15 @@ export default function Hero() {
         </p>
       </div>
 
-      {/* Social icons — only X is live; Telegram is coming soon. */}
-      <div className="absolute bottom-4 right-4 md:right-8 flex items-center gap-3 z-20">
+      {/* Social icons — only X is live; Telegram is coming soon. Padding
+          wraps each icon to a ≥44px tap target for thumbs. */}
+      <div className="absolute bottom-3 right-3 md:right-6 flex items-center gap-1 z-20">
         <a
           href="https://x.com/ChikunLTC"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="X (Twitter)"
-          className="text-bone hover:text-glow transition-colors"
+          className="inline-flex items-center justify-center w-11 h-11 text-bone hover:text-glow transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -117,7 +118,7 @@ export default function Hero() {
         <span
           aria-label="Telegram — coming soon"
           title="Telegram — coming soon"
-          className="text-bone/40 cursor-not-allowed"
+          className="inline-flex items-center justify-center w-11 h-11 text-bone/40 cursor-not-allowed"
         >
           <Send size={20} strokeWidth={2.5} />
         </span>

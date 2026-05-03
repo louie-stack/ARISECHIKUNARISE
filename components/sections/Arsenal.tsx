@@ -277,20 +277,31 @@ function ArsenalCarousel({ items }: { items: ArsenalItem[] }) {
     };
     raf = requestAnimationFrame(tick);
 
+    // Only pause-on-pointer for devices that actually have a hover state
+    // (mouse/trackpad). On touch, pointerenter/leave fire on every tap,
+    // making the carousel feel jerky — leave it auto-scrolling there and
+    // rely on the arrow buttons.
+    const hasHover =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(hover: hover)").matches;
     const onEnter = () => {
       pausedRef.current = true;
     };
     const onLeave = () => {
       pausedRef.current = false;
     };
-    wrap.addEventListener("pointerenter", onEnter);
-    wrap.addEventListener("pointerleave", onLeave);
+    if (hasHover) {
+      wrap.addEventListener("pointerenter", onEnter);
+      wrap.addEventListener("pointerleave", onLeave);
+    }
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      wrap.removeEventListener("pointerenter", onEnter);
-      wrap.removeEventListener("pointerleave", onLeave);
+      if (hasHover) {
+        wrap.removeEventListener("pointerenter", onEnter);
+        wrap.removeEventListener("pointerleave", onLeave);
+      }
     };
   }, []);
 
@@ -338,7 +349,7 @@ function ArsenalCarousel({ items }: { items: ArsenalItem[] }) {
         type="button"
         onClick={() => nudge(-1)}
         aria-label="Scroll left"
-        className="absolute top-1/2 -translate-y-1/2 -left-2 md:-left-4 z-20 w-9 h-9 md:w-10 md:h-10 rounded-full bg-bone text-ink border-2 border-ink shadow-[3px_3px_0_#0A0A0F] flex items-center justify-center hover:bg-glow hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all"
+        className="absolute top-1/2 -translate-y-1/2 left-1 md:-left-4 z-20 w-11 h-11 md:w-10 md:h-10 rounded-full bg-bone text-ink border-2 border-ink shadow-[3px_3px_0_#0A0A0F] flex items-center justify-center hover:bg-glow hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all"
       >
         <ChevronLeft size={18} strokeWidth={3} />
       </button>
@@ -346,7 +357,7 @@ function ArsenalCarousel({ items }: { items: ArsenalItem[] }) {
         type="button"
         onClick={() => nudge(1)}
         aria-label="Scroll right"
-        className="absolute top-1/2 -translate-y-1/2 -right-2 md:-right-4 z-20 w-9 h-9 md:w-10 md:h-10 rounded-full bg-bone text-ink border-2 border-ink shadow-[3px_3px_0_#0A0A0F] flex items-center justify-center hover:bg-glow hover:translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all"
+        className="absolute top-1/2 -translate-y-1/2 right-1 md:-right-4 z-20 w-11 h-11 md:w-10 md:h-10 rounded-full bg-bone text-ink border-2 border-ink shadow-[3px_3px_0_#0A0A0F] flex items-center justify-center hover:bg-glow hover:translate-x-0.5 hover:-translate-y-[calc(50%+2px)] transition-all"
       >
         <ChevronRight size={18} strokeWidth={3} />
       </button>
@@ -520,15 +531,15 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={48}
-                placeholder="BIG CORP GETS IT"
-                className="w-full bg-black/60 border-2 border-black text-bone px-3 py-2.5 rounded-lg font-black tracking-widest uppercase placeholder:text-bone/25 focus:outline-none focus:border-glow/70 transition-colors"
+                placeholder="Big Corp Gets It"
+                className="w-full bg-black/60 border-2 border-black text-bone px-3 py-2.5 rounded-lg font-bold text-base placeholder:text-bone/25 focus:outline-none focus:border-glow/70 transition-colors"
               />
             </div>
 
             {/* Category */}
             <div>
               <FieldLabel>CATEGORY</FieldLabel>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 {FILTERS.map((f) => {
                   const active = category === f.key;
                   return (
@@ -562,7 +573,9 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
                   }
                   maxLength={30}
                   placeholder="yourhandle"
-                  className="flex-1 bg-transparent text-bone px-1 py-2.5 pr-3 font-black tracking-widest uppercase placeholder:text-bone/25 focus:outline-none"
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  className="flex-1 bg-transparent text-bone px-1 py-2.5 pr-3 font-bold text-base placeholder:text-bone/25 focus:outline-none"
                 />
               </div>
             </div>

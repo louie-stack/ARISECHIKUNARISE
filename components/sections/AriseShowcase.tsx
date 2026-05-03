@@ -136,7 +136,7 @@ export default function AriseShowcase() {
           CHIKUN&apos;S ESCAPE
         </h2>
 
-        <p className="prose-normal mt-6 text-base md:text-lg max-w-4xl mx-auto text-bone/80 md:whitespace-nowrap">
+        <p className="prose-normal mt-6 text-base md:text-lg max-w-4xl mx-auto text-bone/80 lg:whitespace-nowrap">
           A strange game. The only winning move is not to play.
         </p>
       </div>
@@ -182,11 +182,11 @@ export default function AriseShowcase() {
             playsInline
             preload="metadata"
             poster="/arise/chikun-flap.png"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover scale-100 md:scale-[1.18] md:translate-x-[2%]"
             style={{
-              // Slight zoom anchored toward the lower-right so the upper sky
-              // strip is cropped without shrinking the gameplay too much.
-              transform: "scale(1.18) translateX(2%)",
+              // Desktop zoom anchored toward the lower-right so the upper sky
+              // strip is cropped without shrinking the gameplay. On mobile we
+              // drop the zoom so the action isn't cropped on a tall card.
               transformOrigin: "center 72%",
             }}
             aria-hidden

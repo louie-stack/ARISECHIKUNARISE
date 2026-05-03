@@ -27,7 +27,7 @@ export default function NewEra() {
           data-reveal
           data-reveal-state={headingState}
           className="font-black leading-[0.85] tracking-tight"
-          style={{ fontSize: "clamp(3rem, 11vw, 10rem)" }}
+          style={{ fontSize: "clamp(2.25rem, 11vw, 10rem)" }}
         >
           THE CHANT
           <br />
@@ -100,9 +100,9 @@ export default function NewEra() {
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-3 gap-6 md:gap-10 items-start">
+          <div className="mt-12 grid grid-cols-3 gap-3 sm:gap-6 md:gap-10 items-start">
             <div>
-              <p className="font-black text-xs md:text-sm tracking-[0.3em] mb-4">
+              <p className="font-black text-[10px] sm:text-xs md:text-sm tracking-[0.2em] sm:tracking-[0.3em] mb-3 sm:mb-4">
                 AIRDROP
               </p>
               <p
@@ -113,7 +113,7 @@ export default function NewEra() {
               </p>
             </div>
             <div>
-              <p className="font-black text-xs md:text-sm tracking-[0.3em] mb-4">
+              <p className="font-black text-[10px] sm:text-xs md:text-sm tracking-[0.2em] sm:tracking-[0.3em] mb-3 sm:mb-4">
                 METHOD
               </p>
               <p
@@ -124,7 +124,7 @@ export default function NewEra() {
               </p>
             </div>
             <div>
-              <p className="font-black text-xs md:text-sm tracking-[0.3em] mb-4">
+              <p className="font-black text-[10px] sm:text-xs md:text-sm tracking-[0.2em] sm:tracking-[0.3em] mb-3 sm:mb-4">
                 CHAIN
               </p>
               <p
@@ -152,7 +152,7 @@ export default function NewEra() {
           }
         `}</style>
         <div className="mt-24 flex justify-center">
-          <div className="relative w-72 h-72 md:w-96 md:h-96">
+          <div className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96">
             {/* Coin image — tilt/bounce loop. multiply blend hides the white
                 export bg against the bone section. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}

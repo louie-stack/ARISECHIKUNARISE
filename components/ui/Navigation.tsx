@@ -132,7 +132,7 @@ export default function Navigation() {
                 {item.comingSoon ? (
                   <div
                     aria-disabled="true"
-                    className="flex items-center gap-4 flex-wrap font-black text-bone/40 text-5xl md:text-7xl tracking-tight cursor-not-allowed select-none"
+                    className="flex items-center gap-3 md:gap-4 flex-wrap font-black text-bone/40 text-3xl sm:text-4xl md:text-7xl tracking-tight leading-[0.95] break-words cursor-not-allowed select-none"
                   >
                     <span>{item.label.toUpperCase()}</span>
                     <span
@@ -146,7 +146,7 @@ export default function Navigation() {
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="block font-black text-bone text-5xl md:text-7xl tracking-tight hover:text-glow transition-colors"
+                    className="block font-black text-bone text-3xl sm:text-4xl md:text-7xl tracking-tight leading-[0.95] break-words hover:text-glow transition-colors"
                   >
                     {item.label.toUpperCase()} →
                   </Link>

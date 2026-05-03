@@ -31,7 +31,7 @@ export default function Footer() {
 
       {/* Bottom strip */}
       <div className="bg-ink border-t-2 border-blue/40">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-bone/60 text-[0.65rem] md:text-xs tracking-[0.2em] text-center">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-bone/60 text-xs tracking-[0.2em] text-center">
           <p>© 2026 CHIKUN. A LORE PROJECT. NOT AFFILIATED WITH THE LITECOIN FOUNDATION.</p>
           <p className="italic">鶏鳴 / KEIMEI</p>
           <p>GENESIS: OCTOBER 7, 2011</p>

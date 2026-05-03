@@ -106,11 +106,13 @@ export default function MerchTeaser() {
                     <input
                       ref={inputRef}
                       type="email"
+                      inputMode="email"
+                      autoComplete="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="YOU@EMAIL.COM"
-                      className="flex-1 bg-ink/60 border-2 border-ink text-bone placeholder:text-bone/40 font-black tracking-widest px-4 py-2.5 rounded-full focus:outline-none focus:border-glow transition-colors uppercase"
+                      placeholder="you@email.com"
+                      className="flex-1 bg-ink/60 border-2 border-ink text-bone placeholder:text-bone/40 font-bold px-4 py-2.5 rounded-full text-base focus:outline-none focus:border-glow transition-colors"
                     />
                     <button
                       type="submit"
@@ -145,7 +147,7 @@ export default function MerchTeaser() {
                 animations on the inner elements so transforms don't stomp each other. */}
             <div className="relative">
               {/* Price tag sticker floating over */}
-              <div className="absolute -top-4 -right-2 md:-top-6 md:-right-6 z-20 pointer-events-none">
+              <div className="absolute -top-3 right-2 md:-top-6 md:-right-6 z-20 pointer-events-none">
                 <span
                   className="tape tape-blood text-sm"
                   style={{ transform: "rotate(6deg)" }}

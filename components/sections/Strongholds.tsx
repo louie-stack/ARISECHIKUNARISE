@@ -175,7 +175,7 @@ export default function Strongholds() {
         </p>
         <h2
           className="font-black text-ink leading-[0.85] tracking-tight"
-          style={{ fontSize: "clamp(3rem, 10vw, 9rem)" }}
+          style={{ fontSize: "clamp(2rem, 10vw, 9rem)" }}
         >
           THE RESISTANCE
           <br />
@@ -254,7 +254,7 @@ export default function Strongholds() {
         {LORE_BODY.map((line, i) => (
           <p
             key={i}
-            className={`relative prose-normal font-mono text-bone text-lg md:text-xl lg:text-2xl leading-[1.7] ${
+            className={`relative prose-normal font-mono text-bone text-base sm:text-lg md:text-xl lg:text-2xl leading-[1.7] ${
               i === 0 ? "" : "mt-6 md:mt-8"
             }`}
           >
@@ -263,7 +263,7 @@ export default function Strongholds() {
         ))}
 
         <p
-          className="relative font-mono font-black text-glow-soft text-3xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight mt-10 md:mt-14"
+          className="relative font-mono font-black text-glow-soft text-2xl sm:text-3xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight mt-10 md:mt-14"
           style={{
             textShadow:
               "0 0 18px rgba(46,232,98,0.55), 0 0 4px rgba(92,255,133,0.85)"
