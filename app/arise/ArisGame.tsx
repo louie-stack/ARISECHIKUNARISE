@@ -2318,7 +2318,7 @@ export default function ArisGame() {
         ? window.location.origin
         : "https://arisechikunarise.vercel.app";
     const gameUrl = `${origin}/arise?${params.toString()}`;
-    return `I just played 'Chikun's Escape' and scored ${lastScore}.\nTry beat my score!\n${gameUrl}\n@ChikunLTC 🐓🎮`;
+    return `I just played 'Chikun's Escape' and scored ${lastScore}.\nTry beat my score!\n${gameUrl}\n@ChikunLTC 🐔🎮`;
   }, [lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
 
   // Opens X's tweet intent in a new tab. URL is embedded in tweetText so we
