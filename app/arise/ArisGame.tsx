@@ -2194,42 +2194,11 @@ export default function ArisGame() {
   }, [nameInput, lastScore, lastCoins, lastTowers, save]);
 
   // Build the share-tweet body. Single source of truth so the modal preview
-  // and the actual X intent stay in lockstep. Structured as a punchy headline,
-  // stat block, and a brand-voice closer; URL is appended by X via &url=.
+  // The full tweet body — embeds the URL inline (rather than passing &url=
+  // to X) so the order matches the user-requested layout: line / line /
+  // link / emoji. URL still carries score params so the OG card stays
+  // personalized when X scrapes it.
   const tweetText = useMemo(() => {
-    const handle = save?.playerName?.trim() || "";
-    const zoneName = ZONES[lastZoneIdx]?.name ?? "THE YARD";
-    const rank = submissionResult?.rank ?? null;
-
-    const subtitle = rank
-      ? `#${rank} on the global leaderboard.`
-      : handle
-        ? `${handle} escaped the Elite.`
-        : `Just escaped the Elite.`;
-
-    const stats = [
-      `⚡ SCORE   ${lastScore}`,
-      `🪙 COINS   ${lastCoins}`,
-      `🗼 TOWERS  ${lastTowers}`,
-      lastMaxCombo >= 2 ? `🔥 COMBO   ×${lastMaxCombo}` : null,
-      `🏙 ZONE    ${zoneName}`,
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    const closer = rank
-      ? `Beat me. The Elite are watching.`
-      : `Defeat the global Elite. Or stay clipped.`;
-
-    return `🐔 CHIKUN'S ESCAPE\n${subtitle}\n\n${stats}\n\n${closer}`;
-  }, [lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
-
-  // Opens X's tweet intent in a new tab. The shared URL carries the run's
-  // stats as query params so Twitter's crawler renders a personalized OG
-  // card (see /api/og). Site URL comes from window.location so it works on
-  // localhost, preview, and production without config.
-  const openXIntent = useCallback(() => {
-    if (typeof window === "undefined") return;
     const params = new URLSearchParams();
     if (lastScore > 0) params.set("score", String(lastScore));
     if (lastCoins > 0) params.set("coins", String(lastCoins));
@@ -2238,13 +2207,23 @@ export default function ArisGame() {
     params.set("zone", String(lastZoneIdx));
     if (save?.playerName) params.set("name", save.playerName);
     if (submissionResult?.rank) params.set("rank", String(submissionResult.rank));
-    const gameUrl = `${window.location.origin}/arise?${params.toString()}`;
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://arisechikunarise.vercel.app";
+    const gameUrl = `${origin}/arise?${params.toString()}`;
+    return `I just played 'Chikun's Escape' and scored ${lastScore}.\nTry beat my score!\n${gameUrl}\n🐔🎮`;
+  }, [lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
+
+  // Opens X's tweet intent in a new tab. URL is embedded in tweetText so we
+  // only pass &text=; X auto-shortens the inline link via t.co.
+  const openXIntent = useCallback(() => {
+    if (typeof window === "undefined") return;
     const intent =
       "https://x.com/intent/tweet" +
-      `?text=${encodeURIComponent(tweetText)}` +
-      `&url=${encodeURIComponent(gameUrl)}`;
+      `?text=${encodeURIComponent(tweetText)}`;
     window.open(intent, "_blank", "noopener,noreferrer");
-  }, [tweetText, lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
+  }, [tweetText]);
 
   const shareRun = useCallback(async () => {
     const canvas = canvasRef.current;
@@ -2861,15 +2840,10 @@ export default function ArisGame() {
               </div>
             </div>
 
-            {/* Tweet preview */}
+            {/* Tweet preview — URL is inside tweetText so no separate line. */}
             <div className="rounded-xl border-2 border-white/15 bg-black/50 p-3 mb-4 text-sm leading-snug">
-              <div className="text-white whitespace-pre-line font-medium">
+              <div className="text-white whitespace-pre-line font-medium break-all">
                 {tweetText}
-              </div>
-              <div className="text-[#1d9bf0] mt-2 break-all">
-                {typeof window !== "undefined"
-                  ? `${window.location.origin}/arise`
-                  : "/arise"}
               </div>
             </div>
 
