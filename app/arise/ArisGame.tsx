@@ -732,15 +732,19 @@ export default function ArisGame() {
 
     let tick: (now: number) => void;
     if (isMobile) {
-      // MOBILE LOOP — dt cap 100 (allows frameScale up to 6 for slow
-      // devices), frameScale boost so mobile runs at 60Hz+ tuning even
-      // when the device renders at 30fps. The 1.5× multiplier on top of
-      // the natural ratio gives mobile a slight speed bias to feel
-      // snappier; can be tuned independently of desktop.
+      // MOBILE LOOP — dt cap 100, then frameScale = 3 × (dt / 16.667).
+      // The constant 3 boost is the per-second speed multiplier vs the
+      // 60Hz desktop tuning: mobile will run at ~180 game-ups/sec
+      // regardless of the actual frame rate (60fps → physics × 3,
+      // 30fps → physics × 6, both give 180 ups). DO NOT clamp at 1 —
+      // that prevents the boost from kicking in on devices that hit
+      // 60fps. If 3× is still not fast enough, raise the constant. If
+      // it's TOO fast, lower it. Easy single dial.
+      const MOBILE_BOOST = 3;
       tick = (now: number) => {
         const dt = Math.min(100, now - lastTime);
         lastTime = now;
-        const frameScale = Math.max(1, (dt / (1000 / 60)) * 1.5);
+        const frameScale = (dt / (1000 / 60)) * MOBILE_BOOST;
         updateRef.current(dt, now, frameScale);
         renderRef.current(ctx, dpr);
         rafRef.current = requestAnimationFrame(tick);
