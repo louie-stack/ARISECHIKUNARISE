@@ -2224,17 +2224,27 @@ export default function ArisGame() {
     return `🐔 CHIKUN'S ESCAPE\n${subtitle}\n\n${stats}\n\n${closer}`;
   }, [lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
 
-  // Opens X's tweet intent in a new tab. Site URL comes from window.location
-  // so it works on localhost, preview, and production without config.
+  // Opens X's tweet intent in a new tab. The shared URL carries the run's
+  // stats as query params so Twitter's crawler renders a personalized OG
+  // card (see /api/og). Site URL comes from window.location so it works on
+  // localhost, preview, and production without config.
   const openXIntent = useCallback(() => {
     if (typeof window === "undefined") return;
-    const gameUrl = `${window.location.origin}/arise`;
+    const params = new URLSearchParams();
+    if (lastScore > 0) params.set("score", String(lastScore));
+    if (lastCoins > 0) params.set("coins", String(lastCoins));
+    if (lastTowers > 0) params.set("towers", String(lastTowers));
+    if (lastMaxCombo >= 2) params.set("combo", String(lastMaxCombo));
+    params.set("zone", String(lastZoneIdx));
+    if (save?.playerName) params.set("name", save.playerName);
+    if (submissionResult?.rank) params.set("rank", String(submissionResult.rank));
+    const gameUrl = `${window.location.origin}/arise?${params.toString()}`;
     const intent =
       "https://x.com/intent/tweet" +
       `?text=${encodeURIComponent(tweetText)}` +
       `&url=${encodeURIComponent(gameUrl)}`;
     window.open(intent, "_blank", "noopener,noreferrer");
-  }, [tweetText]);
+  }, [tweetText, lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
 
   const shareRun = useCallback(async () => {
     const canvas = canvasRef.current;
