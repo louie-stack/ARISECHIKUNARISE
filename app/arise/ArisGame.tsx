@@ -2201,11 +2201,11 @@ export default function ArisGame() {
     const zoneName = ZONES[lastZoneIdx]?.name ?? "THE YARD";
     const rank = submissionResult?.rank ?? null;
 
-    const headline = rank
-      ? `🐔 #${rank} on the global ARISE leaderboard.`
+    const subtitle = rank
+      ? `#${rank} on the global leaderboard.`
       : handle
-        ? `🐔 ${handle} just escaped the Elite.`
-        : `🐔 Just escaped the Elite in ARISE CHIKUN.`;
+        ? `${handle} escaped the Elite.`
+        : `Just escaped the Elite.`;
 
     const stats = [
       `⚡ SCORE   ${lastScore}`,
@@ -2221,7 +2221,7 @@ export default function ArisGame() {
       ? `Beat me. The Elite are watching.`
       : `Defeat the global Elite. Or stay clipped.`;
 
-    return `${headline}\n\n${stats}\n\n${closer}`;
+    return `🐔 CHIKUN'S ESCAPE\n${subtitle}\n\n${stats}\n\n${closer}`;
   }, [lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
 
   // Opens X's tweet intent in a new tab. Site URL comes from window.location
@@ -2232,8 +2232,7 @@ export default function ArisGame() {
     const intent =
       "https://x.com/intent/tweet" +
       `?text=${encodeURIComponent(tweetText)}` +
-      `&url=${encodeURIComponent(gameUrl)}` +
-      `&hashtags=${encodeURIComponent("CHIKUN,ARISE,LITECOIN")}`;
+      `&url=${encodeURIComponent(gameUrl)}`;
     window.open(intent, "_blank", "noopener,noreferrer");
   }, [tweetText]);
 
@@ -2256,7 +2255,7 @@ export default function ArisGame() {
       cctx.fillStyle = "#ffffff";
       cctx.font = "900 60px system-ui, -apple-system, sans-serif";
       cctx.textAlign = "center";
-      cctx.fillText("ARISE · CHIKUN", 400, 80);
+      cctx.fillText("CHIKUN'S ESCAPE", 400, 80);
       cctx.font = "900 180px system-ui";
       cctx.fillText(String(lastScore), 400, 260);
       cctx.font = "900 22px system-ui";
@@ -2281,7 +2280,7 @@ export default function ArisGame() {
         await nav.share({
           files: [file],
           title: "ARISE",
-          text: `I flew ${lastScore} in ARISE. Join the flock.`,
+          text: `I flew ${lastScore} in CHIKUN'S ESCAPE. Join the flock.`,
         });
         setShareToast("Shared");
       } else {
@@ -2837,7 +2836,7 @@ export default function ArisGame() {
             {/* Score readout */}
             <div className="rounded-xl border-2 border-white/15 bg-white/5 p-4 mb-3">
               <div className="text-[10px] tracking-[0.3em] text-white/60 font-black">
-                ARISE · CHIKUN
+                CHIKUN&apos;S ESCAPE
               </div>
               <div className="flex items-baseline gap-3 mt-1">
                 <div className="font-black text-white leading-none text-5xl tabular-nums">
@@ -2861,9 +2860,6 @@ export default function ArisGame() {
                 {typeof window !== "undefined"
                   ? `${window.location.origin}/arise`
                   : "/arise"}
-              </div>
-              <div className="text-white/60 text-xs mt-1">
-                #CHIKUN #ARISE #LITECOIN
               </div>
             </div>
 
