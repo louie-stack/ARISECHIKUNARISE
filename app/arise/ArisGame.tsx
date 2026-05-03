@@ -723,13 +723,23 @@ export default function ArisGame() {
     canvas.height = CFG.canvas.h * dpr;
 
     // Original game loop — one update per rAF call with the actual
-    // elapsed dt. Game was tuned this way; reverting after several
-    // accumulator/step variants caused regressions on different
-    // refresh rates. Mobile may run somewhat slower if frame rate
-    // drops below 60fps, but DPR-cap above mitigates the worst of it.
+    // elapsed dt. Game was tuned this way; combined with frameScale
+    // inside update() this stays correct at any refresh rate.
+    //
+    // dt cap is 100ms (was 33ms): the old cap meant that when mobile
+    // dropped below 30fps, frameScale was clamped to 1.98 even though
+    // real time advanced more — so physics under-corrected and the
+    // game appeared to run in slow motion. With cap=100, frameScale
+    // can scale up to 6.0, covering any mobile down to 10fps. Desktop
+    // dt is always ~16ms so this cap doesn't affect it. Tab unfreeze
+    // is handled via visibilitychange to avoid the 100ms jump.
     let lastTime = performance.now();
+    const onVisibility = () => {
+      if (!document.hidden) lastTime = performance.now();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
     const tick = (now: number) => {
-      const dt = Math.min(33, now - lastTime);
+      const dt = Math.min(100, now - lastTime);
       lastTime = now;
       updateRef.current(dt, now);
       renderRef.current(ctx, dpr);
@@ -738,6 +748,7 @@ export default function ArisGame() {
     rafRef.current = requestAnimationFrame(tick);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetsReady]);
