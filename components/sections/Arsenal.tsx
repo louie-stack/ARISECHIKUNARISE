@@ -33,29 +33,16 @@ function getDownloadSrc(item: ArsenalItem): string {
 }
 
 // Seeded from existing site assets. Swap paths / add entries as new arsenal
-// art lands. Memes are placeholder slots for now — flip `placeholder` off
-// and set `src` to a real asset as each one arrives.
+// art lands. Drop a new meme-NN.png into public/art/arsenal/, run
+// `node scripts/optimize-arsenal.mjs` to generate the .webp sibling, then
+// add an entry below.
 const ITEMS: ArsenalItem[] = [
-  { id: "meme-01", src: "", type: "meme", format: "MEME", title: "Meme 01", placeholder: true },
-  { id: "meme-02", src: "", type: "meme", format: "MEME", title: "Meme 02", placeholder: true },
-  { id: "meme-03", src: "", type: "meme", format: "MEME", title: "Meme 03", placeholder: true },
-  { id: "meme-04", src: "", type: "meme", format: "MEME", title: "Meme 04", placeholder: true },
-  { id: "meme-05", src: "", type: "meme", format: "MEME", title: "Meme 05", placeholder: true },
-  { id: "meme-06", src: "", type: "meme", format: "MEME", title: "Meme 06", placeholder: true },
-  { id: "meme-07", src: "", type: "meme", format: "MEME", title: "Meme 07", placeholder: true },
-  { id: "meme-08", src: "", type: "meme", format: "MEME", title: "Meme 08", placeholder: true },
-  { id: "meme-09", src: "", type: "meme", format: "MEME", title: "Meme 09", placeholder: true },
-  { id: "meme-10", src: "", type: "meme", format: "MEME", title: "Meme 10", placeholder: true },
-  { id: "meme-11", src: "", type: "meme", format: "MEME", title: "Meme 11", placeholder: true },
-  { id: "meme-12", src: "", type: "meme", format: "MEME", title: "Meme 12", placeholder: true },
-  { id: "meme-13", src: "", type: "meme", format: "MEME", title: "Meme 13", placeholder: true },
-  { id: "meme-14", src: "", type: "meme", format: "MEME", title: "Meme 14", placeholder: true },
-  { id: "meme-15", src: "", type: "meme", format: "MEME", title: "Meme 15", placeholder: true },
-  { id: "meme-16", src: "", type: "meme", format: "MEME", title: "Meme 16", placeholder: true },
-  { id: "meme-17", src: "", type: "meme", format: "MEME", title: "Meme 17", placeholder: true },
-  { id: "meme-18", src: "", type: "meme", format: "MEME", title: "Meme 18", placeholder: true },
-  { id: "meme-19", src: "", type: "meme", format: "MEME", title: "Meme 19", placeholder: true },
-  { id: "meme-20", src: "", type: "meme", format: "MEME", title: "Meme 20", placeholder: true },
+  { id: "meme-01", src: "/art/arsenal/meme-01.webp", type: "meme", format: "MEME", title: "Basketball" },
+  { id: "meme-02", src: "/art/arsenal/meme-02.webp", type: "meme", format: "MEME", title: "Tell Me More" },
+  { id: "meme-03", src: "/art/arsenal/meme-03.webp", type: "meme", format: "MEME", title: "Find Out" },
+  { id: "meme-04", src: "/art/arsenal/meme-04.webp", type: "meme", format: "MEME", title: "Plumber" },
+  { id: "meme-05", src: "/art/arsenal/meme-05.webp", type: "meme", format: "MEME", title: "Punch" },
+  { id: "meme-06", src: "/art/arsenal/meme-06.webp", type: "meme", format: "MEME", title: "Takeover" },
   { id: "fiction-01", src: "/art/arsenal/fiction-01.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 01" },
   { id: "fiction-02", src: "/art/arsenal/fiction-02.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 02" },
   { id: "fiction-03", src: "/art/arsenal/fiction-03.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 03" },
