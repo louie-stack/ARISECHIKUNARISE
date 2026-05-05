@@ -43,6 +43,8 @@ const ITEMS: ArsenalItem[] = [
   { id: "meme-04", src: "/art/arsenal/meme-04.webp", type: "meme", format: "MEME", title: "Plumber" },
   { id: "meme-05", src: "/art/arsenal/meme-05.webp", type: "meme", format: "MEME", title: "Punch" },
   { id: "meme-06", src: "/art/arsenal/meme-06.webp", type: "meme", format: "MEME", title: "Takeover" },
+  { id: "meme-07", src: "/art/arsenal/meme-07.webp", type: "meme", format: "MEME", title: "Jedi" },
+  { id: "meme-08", src: "/art/arsenal/meme-08.webp", type: "meme", format: "MEME", title: "Sad" },
   { id: "fiction-01", src: "/art/arsenal/fiction-01.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 01" },
   { id: "fiction-02", src: "/art/arsenal/fiction-02.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 02" },
   { id: "fiction-03", src: "/art/arsenal/fiction-03.webp", type: "fiction", format: "FAN FICTION", title: "Fan Fiction 03" },
