@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { getSupabase } from "@/app/arise/game/supabase";
 
 const PLACEHOLDER = "https://picsum.photos/seed/chikun-merch/900/900";
 
@@ -16,6 +17,8 @@ export default function MerchTeaser() {
   const [showForm, setShowForm] = useState(false);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -24,15 +27,37 @@ export default function MerchTeaser() {
     }
   }, [showForm]);
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const trimmed = email.trim();
-    if (!trimmed) return;
-    // No backend yet — capture locally (dev only). Swap this to an email
-    // capture endpoint (MailerLite, Beehiiv, custom) when one is ready.
-    if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
-      console.log("[merch:notify]", trimmed);
+    if (pending) return;
+    const cleaned = email.trim().toLowerCase();
+    if (!cleaned) return;
+
+    setError(null);
+    setPending(true);
+
+    const supabase = getSupabase();
+    if (!supabase) {
+      // Env not configured (dev without keys) — accept and move on.
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.log("[merch:notify]", cleaned);
+      }
+      setPending(false);
+      setSubmitted(true);
+      return;
+    }
+
+    const { error: insertError } = await supabase
+      .from("merch_signups")
+      .insert({ email: cleaned });
+
+    setPending(false);
+
+    // Treat the unique-violation as success — they're already on the list.
+    if (insertError && insertError.code !== "23505") {
+      setError("Couldn't sign up — try again in a moment.");
+      return;
     }
     setSubmitted(true);
   };
@@ -101,25 +126,32 @@ export default function MerchTeaser() {
                 {showForm && !submitted && (
                   <form
                     onSubmit={onSubmit}
-                    className="flex flex-col sm:flex-row gap-2"
+                    className="flex flex-col gap-2"
                   >
-                    <input
-                      ref={inputRef}
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@email.com"
-                      className="flex-1 bg-ink/60 border-2 border-ink text-bone placeholder:text-bone/40 font-bold px-4 py-2.5 rounded-full text-base focus:outline-none focus:border-glow transition-colors"
-                    />
-                    <button
-                      type="submit"
-                      className="btn-pill btn-pill-glow shrink-0"
-                    >
-                      SUBMIT →
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        ref={inputRef}
+                        type="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        required
+                        disabled={pending}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@email.com"
+                        className="flex-1 bg-ink/60 border-2 border-ink text-bone placeholder:text-bone/40 font-bold px-4 py-2.5 rounded-full text-base focus:outline-none focus:border-glow transition-colors disabled:opacity-60"
+                      />
+                      <button
+                        type="submit"
+                        disabled={pending}
+                        className="btn-pill btn-pill-glow shrink-0 disabled:opacity-60"
+                      >
+                        {pending ? "SENDING…" : "SUBMIT →"}
+                      </button>
+                    </div>
+                    {error && (
+                      <p className="text-sm font-bold text-blood">{error}</p>
+                    )}
                   </form>
                 )}
 
