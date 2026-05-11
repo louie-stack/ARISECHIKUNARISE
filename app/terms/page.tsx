@@ -62,7 +62,15 @@ const SECTIONS: { heading: string; body: string[] }[] = [
     ],
   },
   {
-    heading: "9. CHANGES TO THESE TERMS",
+    heading: "9. PRIVACY & DATA",
+    body: [
+      "This site collects an email address only if you voluntarily submit one through the merch-drop signup. That email is stored in our database for the sole purpose of notifying you when merch is released. We do not sell, rent, or share email addresses with third parties.",
+      "We do not set tracking cookies, do not run third-party advertising trackers, and do not profile visitors. Standard hosting logs from our infrastructure provider may briefly record IP addresses for security and abuse-prevention purposes.",
+      "You may request deletion of your email at any time by contacting us via the official channels linked on this site. We will action the request within a reasonable timeframe.",
+    ],
+  },
+  {
+    heading: "10. CHANGES TO THESE TERMS",
     body: [
       "We may update these terms at any time, without prior notice. Continued use of the site after an update constitutes acceptance of the revised terms. The date below reflects the most recent revision.",
     ],
@@ -124,7 +132,7 @@ export default function TermsPage() {
         {/* Footer */}
         <div className="mt-16 pt-8 border-t border-bone/15 text-center">
           <p className="font-black text-bone/50 text-xs tracking-[0.3em]">
-            LAST UPDATED · APRIL 22, 2026
+            LAST UPDATED · MAY 11, 2026
           </p>
           <p className="prose-normal text-bone/40 text-xs md:text-sm mt-3 italic">
             Arise Chikun, Arise.
