@@ -15,8 +15,8 @@ const STRONGHOLD_IMAGES_ROW1 = [
 ];
 
 const STRONGHOLD_IMAGES_ROW2 = [
+  "/art/scenes/green-candle.webp",
   "/art/scenes/chikun-02.webp",
-  "/art/scenes/chikun-11.webp",
   "/art/scenes/chikun-08.webp",
   "/art/scenes/chikun-10.webp",
   "/art/scenes/chikun-06.webp"
