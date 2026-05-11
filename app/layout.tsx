@@ -12,14 +12,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ARISE CHIKUN, ARISE",
     description: DESCRIPTION,
-    images: [{ url: "/api/og", width: 1200, height: 630, alt: "CHIKUN'S ESCAPE" }],
+    images: [{ url: "/og-share.png", width: 1200, height: 630, alt: "ARISE CHIKUN, ARISE" }],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
     title: "ARISE CHIKUN, ARISE",
     description: DESCRIPTION,
-    images: ["/api/og"]
+    images: ["/og-share.png"]
   }
 };
 

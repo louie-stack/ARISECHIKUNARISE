@@ -2299,27 +2299,9 @@ export default function ArisGame() {
     setSubmissionResult({ submitted: true, rank });
   }, [nameInput, lastScore, lastCoins, lastTowers, save]);
 
-  // Build the share-tweet body. Single source of truth so the modal preview
-  // The full tweet body — embeds the URL inline (rather than passing &url=
-  // to X) so the order matches the user-requested layout: line / line /
-  // link / emoji. URL still carries score params so the OG card stays
-  // personalized when X scrapes it.
   const tweetText = useMemo(() => {
-    const params = new URLSearchParams();
-    if (lastScore > 0) params.set("score", String(lastScore));
-    if (lastCoins > 0) params.set("coins", String(lastCoins));
-    if (lastTowers > 0) params.set("towers", String(lastTowers));
-    if (lastMaxCombo >= 2) params.set("combo", String(lastMaxCombo));
-    params.set("zone", String(lastZoneIdx));
-    if (save?.playerName) params.set("name", save.playerName);
-    if (submissionResult?.rank) params.set("rank", String(submissionResult.rank));
-    const origin =
-      typeof window !== "undefined"
-        ? window.location.origin
-        : "https://arisechikunarise.vercel.app";
-    const gameUrl = `${origin}/arise?${params.toString()}`;
-    return `I just played 'Chikun's Escape' and scored ${lastScore}.\nTry beat my score!\n${gameUrl}\n@ChikunLTC 🐔🎮`;
-  }, [lastScore, lastCoins, lastTowers, lastMaxCombo, lastZoneIdx, save?.playerName, submissionResult?.rank]);
+    return `I just played 'Chikun's Escape' and scored ${lastScore}.\nTry beat my score!\nhttps://www.chikun.meme/arise\n@ChikunLTC 🐔🎮`;
+  }, [lastScore]);
 
   // Opens X's tweet intent in a new tab. URL is embedded in tweetText so we
   // only pass &text=; X auto-shortens the inline link via t.co.
